@@ -9,20 +9,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % close all; clear all;
 close all;
-% for(z = 1:100)
-% graph = true; %Check to display graphs
 global alpha nu x N;
-
-%     N = 2^12;
-%     if mod(N,2)
-%         N = N+1;
-%         display('WARNING: Odd number of gridpoints not supported, adding one to make an even number.');
-%     end
-%     alpha = .01;
-%     alpha = 10^(-10);
-%     alpha = logalpha(z);
-%     nu = 0.000102;
-%     T = 100;
+% 
+% N = 2^12;
+% alpha = .01;
+% alpha = 10^(-10);
+% alpha = logalpha(z);
+% nu = 0.000102;
+% T = 100;
 graph = true;
 %     graph = false;
 
@@ -36,8 +30,8 @@ x = linspace(0,L,N);
 timesteps = ceil(T/dt);
 
 %% Initial Conditions
-%         seed = randi(10000);
-%     fprintf('seed: %d\n', seed);
+% seed = randi(10000);
+% fprintf('seed: %d\n', seed);
 rng(seed);
 u_0 = 0.01*randn(1,N);
 u_0(1) = 0;
