@@ -15,15 +15,15 @@ global alpha nu x N;
 % load('Data\2018.01.23.01.24.03.575.mat')
 if( exist('T','var') == 0)
     alpha = .1;
-    nu = .007;
+    nu = .1;
     dt = 0.01;
 %     error = ;
-    min_nodes = 10;
+    min_nodes = 4;
     L = 1;
     N = 2^12;
     mu = 5;
     seed = randi(10000);
-    T = 50;
+    T = 200;
 end
 
 graph = true;
@@ -40,11 +40,10 @@ timesteps = ceil(T/dt);
 % seed = randi(10000);
 % fprintf('seed: %d\n', seed);
 rng(seed);
-a = (10^(0))*rand(1,N/8);
-k = 1:1:N/8;
-
+a = (10^(0))*rand(1,N/4);
+k = 1:1:N/4;
 u_0 = zeros(1,N);
-for i = 1:N/8
+for i = 1:N/4
     u_0 = u_0 + (a(i)*sin(2*pi*k(i)*x));
 end
 u_0 = u_0/(norm(u_0)*sqrt(dx))*10^-3;
@@ -65,6 +64,8 @@ if(graph)
     set(h, 'YDataSource','u');
     set(h2, 'XDataSource','x');
     set(h2, 'YDataSource','v');
+    title ( sprintf ('u(x ,%1.3f)',0 ));
+
 %     drawnow;
     f = subplot(1,2,2);
 end
@@ -112,6 +113,23 @@ while(max(abs(u))<.9/sqrt(alpha)&&t<T)
     ui = B\(ui.*(ones(N-2,1)+dt.*(alpha.*(-2-(ui.^2))))); %Convex Splitting Method
     
     u(2:N-1) = ui;
+    
+%% Graphing fft
+if graph&&~ishghandle(f)&&~ishghandle(h)
+    return
+end
+if (ishghandle(f)&&graph && mod(offset,100) == 0)
+    subplot(1,2,2);
+    u_hat = fft(u);
+    loglog(abs(u_hat(1:N/2))/N);
+    %         hold on;
+    y1=get(gca,'ylim');
+    line([N/4 N/4],[1e-20 1e10]);
+    line([1e-0 N/4],[1e-15 1e-15]);
+    axis([1,N/2,1e-20,1e5]);
+    title ( sprintf ('Spectrum of u at time: %1.3f',t ));
+    drawnow;
+end
 end
 if t >= T
     close all;
@@ -148,7 +166,7 @@ for( k = 1:timesteps-offset)
         return
     end
 %     if(max(u)> 0.9/sqrt(alpha)&&graph && mod(k,5) == 0
-    if(graph && mod(k,100) == 0)
+    if(graph && mod(k,20) == 0)
         subplot(1,2,1);
         refreshdata(h,'caller');
         refreshdata(h2,'caller');
@@ -164,7 +182,8 @@ for( k = 1:timesteps-offset)
         y1=get(gca,'ylim');
         line([N/4 N/4],[1e-20 1e10]);
         line([1e-0 N/4],[1e-15 1e-15]);
-        axis([1,N/2,1e-20,1e2]);
+        axis([1,N/2,1e-20,1e5]);
+        title ( sprintf ('Spectrum of u at time: %1.3f',t ));
         drawnow;
     end
     
