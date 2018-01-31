@@ -14,36 +14,26 @@ global alpha nu x N;
 %% Load Variables
 % load('Data\2018.01.23.01.24.03.575.mat')
 if( exist('T','var') == 0)
-    alpha = 1;
-    nu = .07;
+    alpha = .1;
+    nu = .007;
     dt = 0.01;
 %     error = ;
-    min_nodes = 3;
+    min_nodes = 10;
     L = 1;
     N = 2^12;
-    mu = 10;
+    mu = 5;
     seed = randi(10000);
-    T = 1000;
+    T = 50;
 end
 
 graph = true;
 % graph = false;
-% 
-% N = 2^12;
-% alpha = .1;
-% alpha = 10^(-10);
-% alpha = logalpha(z);
-% nu = 0.0102;
-% T = 100;
-% graph = true;
-%     graph = false;
+
 
 %% Initialize other constants
-%     tol = 1e-5;
-%     L = 1;
+
 dx = L/N;
 x = linspace(0,L,N);
-%     dt = .01;
 timesteps = ceil(T/dt);
 
 %% Initial Conditions
@@ -98,7 +88,6 @@ if(graph)
     set(h3, 'YDataSource','zeros(1,length(x_nodes))');
 end
 v = zeros(size(u));
-error_DA = zeros(1,timesteps);
 %             error_DA(1) = norm(u_0);
 ui = u(2:N-1);
 vi = v(2:N-1);
@@ -106,9 +95,35 @@ vi = v(2:N-1);
 % close all
 % f = figure;
 % line([N/4 N/4], [0 inf]);
-for k = 1:timesteps
+% for k = 1:timesteps
+offset = 0;
+while(max(abs(u))<.9/sqrt(alpha)&&t<T)
     %solves pde
+    offset = offset +1;
+    t = t+dt;
+    umv = u - v;
+    %error_DA(k) = sqrt(dx)*norm(umv);
+%     if(max(error_DA(k)>1e50))
+%         return
+%     end
+%     Ih_umv = interp1(x_nodes,umv(i_nodes),x)';
+%     Ih_umv(1) = []; Ih_umv(end) = [];
+
+    ui = B\(ui.*(ones(N-2,1)+dt.*(alpha.*(-2-(ui.^2))))); %Convex Splitting Method
     
+    u(2:N-1) = ui;
+end
+if t >= T
+    close all;
+    return
+end
+error_DA = zeros(1,timesteps-offset);
+
+    %Error calculation
+    %% Data Assimiliation
+for( k = 1:timesteps-offset)
+    
+        
     t = t+dt;
     umv = u - v;
     error_DA(k) = sqrt(dx)*norm(umv);
@@ -122,8 +137,6 @@ for k = 1:timesteps
     
     u(2:N-1) = ui;
     
-    %Error calculation
-    %% Data Assimiliation
     vi = B\(vi+dt*(alpha*(-2*vi-(vi.^3))+ mu*Ih_umv)); %Convex Splitting Method
     v(2:N-1) = vi;
     %     error_DA(k+1) = norm(u-v);
@@ -135,7 +148,7 @@ for k = 1:timesteps
         return
     end
 %     if(max(u)> 0.9/sqrt(alpha)&&graph && mod(k,5) == 0
-    if(t>20&&graph && mod(k,100) == 0)
+    if(graph && mod(k,100) == 0)
         subplot(1,2,1);
         refreshdata(h,'caller');
         refreshdata(h2,'caller');
@@ -157,15 +170,14 @@ for k = 1:timesteps
     
     
 end
-% if(graph)
-%     figure
-%     semilogy(dt:dt:T, error_DA);
-% end
+if(graph)
+    figure
+    semilogy(dt*offset:dt:T, error_DA);
+end
 
 %% Save Data
 %         date = datestr(now,'yyyy.mm.dd.HH.MM.SS.FFF');
 %         save(['Data/' date '.mat'],'L','N','T','dt','alpha','nu','mu','seed','int_nodes','min_nodes','error');
-
 
 
 

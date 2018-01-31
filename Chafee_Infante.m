@@ -3,11 +3,14 @@
 %basic constants defined by problem
 % close all; clear all;
 close all;
-logalpha = logspace(-10,0,100);
-end_nodes = zeros(100,10);
-for(z = 1:100)
+numAlpha = 10;
+numTrials = 10;
+tol = 1e-5;
+logalpha = logspace(-10,0,numAlpha);
+end_nodes = zeros(100,numTrials);
+for(z = 1:numAlpha)
     % graph = true; %Check to display graphs
-    global alpha nu x N r vel tol;
+    global alpha nu x N r vel;
     
     N = 2^12;
     %     if mod(N,2)
@@ -18,12 +21,11 @@ for(z = 1:100)
     % alpha = 10^(-10);
     alpha = logalpha(z);
     nu = 0.000102;
-    T = 100;
+    T = 50;
     %     graph = true;
     graph = false;
     
     %% Initialize other constants
-    tol = 1e-5;
     L = 1;
     dx = L/N;
     x = linspace(0,L,N);
@@ -44,7 +46,7 @@ for(z = 1:100)
     % u_0 = sin(x*pi);
     % u_0 = sin(.5*x) +.1*cos(15*x);
     % rng(1000);
-    for(i = 1:10)
+    for(i = 1:numTrials)
         
         seed = randi(10000);
         % seed = 6701;
@@ -87,11 +89,11 @@ for(z = 1:100)
         % i_nodes = 1:10;
         % i_nodes = linspace(1,N,10);
         error = 1;
-        min_nodes = 1;
-        while(error>10^-5)
+        min_nodes = 6;
+        while(error>tol)
             min_nodes = min_nodes+1;
             int_nodes = min_nodes;
-            i_nodes = 1:floor(N/(int_nodes - 1)):N;
+            i_nodes = floor(linspace(1,N,int_nodes));
             
             %     i_nodes =1:floor((N/int_nodes)):N;
             if i_nodes(end) ~= N
@@ -201,41 +203,6 @@ for(z = 1:100)
 end
 save('Data/results.mat','end_nodes','logalpha');
 
-
-
-%% Auxilary Functions
-function exact(t)
-global x nu u_exact;
-u_exact = (exp(-nu*(pi^2)*t).*sin(pi*x(2:end-1)))';
-
-end
-
-function f = forcing
-global alpha u_exact;
-f = -u_exact + alpha.*(u_exact.^3);
-end
-
-function [x_nodes, i_nodes] = updateNodes(prev_nodes,v)
-global x N r vel tol pass;
-% if(min(abs(v)) < 1)
-%     vel = 1;
-% else
-%     vel = 20;
-% end
-if(prev_nodes(end)+r*vel >= N-1)
-    r = -1;
-    pass = 1;
-elseif(prev_nodes(1)+r*vel <=1)
-    r = 1;
-end
-% n = min(find((abs(uv)==max(abs(uv)))));
-i_nodes = mod((prev_nodes+r*vel),N);
-x_nodes = x(i_nodes);
-% x_nodes = [x(prev_nodes),x(n)];
-% i_nodes = [prev_nodes,n];
-%     x_nodes = unique([x(prev_nodes),x(n)]);
-%     i_nodes = unique([prev_nodes,n]);
-end
 
 
 
