@@ -172,7 +172,7 @@ for( k = 1:timesteps-offset)
 end
 if(graph)
     figure
-    semilogy(dt*offset:dt:T, error_DA);
+    semilogy(dt*(offset+1):dt:T, error_DA);
 end
 
 %% Save Data
