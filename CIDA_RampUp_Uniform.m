@@ -15,17 +15,18 @@ global u v x_nodes u_f umv_error
 %% Load Variables
 % load('Data\2018.01.23.01.24.03.575.mat')
 if( exist('T','var') == 0)
-    alpha = .001;
-    nu = .0001;
+    alpha = 1;
+    %alpha = 0;
+    nu = 7.5e-6;
 %     dt = 0.01;
 %     error = ;
     min_nodes = 10;
     L = 1;
     N = 2^12;
     mu = 10;
-    seed = randi(10000)
-%     seed = 6700;
-    T = 50;
+%    seed = randi(10000)
+     seed = 3552;
+    T = 20;
 end
 
 graph = true;
@@ -129,7 +130,8 @@ end
 % for k = 1:timesteps
 %% Ramp up
 offset = 0;
-while(max(abs(u))<.9/sqrt(alpha)&&t<T)
+% while(max(abs(u))<.999/sqrt(alpha)&&t<T)
+while(t<11.08)
     %% Graphing fft
 if (graph && mod(offset,100) == 0)
     if(~Graphing(t))
@@ -154,6 +156,7 @@ if t >= T
     return
 end
 error_DA = zeros(1,timesteps-offset);
+% pause;
 %% Data Assimiliation
 for k = 1:timesteps-offset
     
