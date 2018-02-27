@@ -13,21 +13,27 @@ clear all;
 global alpha nu x N;
 global u v_g v_c v_o x_nodes_g x_nodes_c x_nodes_o u_f umv_error
 global car grid optimal
+expDate = datestr(now,'yyyy.mm.dd.HH.MM.SS');
 
 %% Experiment Parameters
 nu_trials = 100;
-mu_trials = 41;
+% nu_trials = 2;
+% mu_trials = 41;
+
+% mu_trials = 1;
 % mu_trials = 10;
 % mu_nodes = 100:1:110;
-trials = 3;
-mu_nodes = [1, 5:5:200];%linspace(1,200,20)
-nu_nodes = logspace(log10(0.01),log10(7.5e-6),100);
-
+trials = 4;
+% mu_nodes = [1, 5:5:200];%linspace(1,200,20)
+% mu_nodes = [200];
+nu_nodes = logspace(log10(0.01),log10(7.5e-6),nu_trials);
+% nu_nodes = [0.0001, 7.5e-6];
 %Storage Variables
-mu_data = zeros(nu_trials*trials,mu_trials);
-
+% mu_data = zeros(nu_trials*trials,mu_trials);
+% all_min_nodes = zeros(nu_trials,trials);
+% mu = 
 % num_trials = 4;
-% all_min_nodes = zeros(length(nu_nodes),num_trials);
+all_min_nodes = zeros(length(nu_nodes),trials);
 for(trials_nu = 1:nu_trials)
     %% Load Variables
     % load('Data\2018.01.23.01.24.03.575.mat')
@@ -35,21 +41,22 @@ for(trials_nu = 1:nu_trials)
     alpha = 1;
     %alpha = 0;
     %     nu = 7.5e-6;
-    nu = nu_nodes(nu_trials);
+    nu = nu_nodes(trials_nu);
+    mu = 100;
     %     dt = 0.01;
     %     error = ;
 %     min_nodes = 10;
     M = 0.25*nu^-0.5;
-    min_nodes = max(ceil(M),5);
+%     min_nodes = max(ceil(M),5);
     L = 1;
     N = 2^12;
 %     mu = 50;
     %      seed = 3552;
-    T = 25;
+    T = 50;
     %     end
     
     graph = false;
-    car = true;
+    car = false;
     grid = true;
     optimal = false;
     opt_tol = 1e-5;
@@ -96,7 +103,8 @@ for(trials_nu = 1:nu_trials)
         %% Data Assimilation
         global velocity direction pass
         if(car)
-            int_nodes_c = min_nodes;
+%             int_nodes_c = min_nodes;
+            int_nodes_c = 2;
             i_nodes_c = 1:int_nodes_c;
             x_nodes_c = x(i_nodes_c);
             velocity = length(i_nodes_c);
@@ -104,7 +112,8 @@ for(trials_nu = 1:nu_trials)
             pass = 0;
         end
         if(grid)
-            int_nodes_g = min_nodes;
+%             int_nodes_g = min_nodes;
+            int_nodes_g = 2;
             i_nodes_g = floor(linspace(1,N-1,int_nodes_g));
             x_nodes_g = x(i_nodes_g);
         end
@@ -132,9 +141,11 @@ for(trials_nu = 1:nu_trials)
             close all;
             return
         end
-        
-        for(trials_mu = 1:mu_trials)
-            mu = mu_nodes(trials_mu);
+        t_ramp = t;
+        offset = 0;
+%         for(trials_mu = 1:mu_trials)
+%             mu = mu_nodes(trials_mu);
+%             mu = 50;
             error_DA_c = ones(1,timesteps-offset);
             error_DA_g = ones(1,timesteps-offset);
             error_DA_o = ones(1,timesteps-offset);
@@ -145,8 +156,24 @@ for(trials_nu = 1:nu_trials)
 %             ui = u_ramp(2:N);
             
             %             while(abs(endpt2 - endpt1)>1)
-            
-            error = 1;
+            endpt1 = 2;
+            endpt2 = N-1;
+            while((endpt2 - endpt1)>1)
+                if(grid)
+                    int_nodes_g = floor((endpt2 + endpt1)/2);
+                    i_nodes_g = floor(linspace(1,N-1,int_nodes_g));
+                    x_nodes_g = x(i_nodes_g);
+                end
+                t = t_ramp;
+                if(car)
+                    int_nodes_c = floor((endpt2+endpt1)/2);
+                    i_nodes_c = 1:int_nodes_c;
+                    x_nodes_c = x(i_nodes_c);
+                    velocity = int_nodes_c;
+                    pass = 0;
+                    direction = 1;
+                end
+                %             error = 1;
             vi_o = zeros(1,N-1)';
             vi_g = zeros(1,N-1)';
             vi_c = zeros(1,N-1)';
@@ -163,9 +190,10 @@ for(trials_nu = 1:nu_trials)
 %             opt_tol = (endpt2+endpt1)/2;
             %% Data Assimiliation
             k = 0;
-            while(mu_data(trials_nu+trials_repeated-1,trials_mu) == 0 && k <=timesteps - offset)
-                %             for k = 1:timesteps-offset
-                k = k+1;
+%                 for(k=1:timesteps-offset)
+%             while(mu_data(trials_nu+trials_repeated-1,trials_mu) == 0 && k <=timesteps - offset)
+                            for k = 1:timesteps-offset
+%                 k = k+1;
                 
                 t = t+dt;
                 if(grid)
@@ -205,17 +233,33 @@ for(trials_nu = 1:nu_trials)
                     v_o(2:N) = vi_o;
                     error_DA_o(k+1) = sqrt(dx)*norm(u-v_o);
                 end
-                if(error_DA_g(k+1)>error_DA_c(k+1)&&error_DA_g(k+1)>1e-14)
-                    mu_data(trials_nu+trials_repeated-1,trials_mu) = 1;
-                end
-                if(error_DA_g(k+1) > 1e2||error_DA_c(k+1)>1e2)
-                    mu_data(trials_nu+trials_repeated - 1,trials_mu) = -1;
-                end
-%                 if(error_DA_c(k+1)>1e2)
-%                     mu_data(trials_nu+trials_repeated - 1,trials_mu) = -2;
+%                 if(error_DA_g(k+1)>error_DA_c(k+1)&&error_DA_g(k+1)>1e-14&&error_DA_g(k+1)<1e-1)
+%                     mu_data((trials_nu-1)*trials+trials_repeated,trials_mu) = 1;
 %                 end
-                
+%                 if(k>3&&(error_DA_g(k+1) > 1e0||error_DA_c(k+1)>1e0))
+%                     mu_data((trials_nu-1)*trials+trials_repeated,trials_mu) = -1;
+%                 end
+%                 if(error_DA_c(k+1)>1e2)
+%                     mu_data((trials_nu-1)*trials+trials_repeated,trials_mu) = -2;
+%                 end
+%                 error =
+                end
+                if(car)
+                    error = (error_DA_c(end));
+                    result = int_nodes_c;
+                end
+                if(grid)
+                    error=(error_DA_g(end));
+                    result = int_nodes_g;
+                end
+                if(error<tol)
+                    endpt2 = result;
+                else
+                    endpt1 = result;
+                end
             end
+            min_nodes = endpt2;
+            all_min_nodes(trials_nu,trials_repeated) = min_nodes;
 %             close all;
 %             plot(error_DA_g);
 %             hold on;
@@ -223,6 +267,8 @@ for(trials_nu = 1:nu_trials)
 %             set(gca,'yscale','log')
 %             drawnow;
 %             mu
+%         end
+%     end
 %             pause;
 %             error = sqrt(dx)*norm(u-v_g);
 %             if(error <tol)
@@ -238,14 +284,52 @@ for(trials_nu = 1:nu_trials)
 %             min_nodes = (int_nodes_g);
             %         all_min_nodes(nu_trials, trials_repeated) = min_nodes;
 %             mu_data(trials_nu+trials_repeated - 1, trials_mu) = result;
+%         end
+        date = datestr(now,'yyyy.mm.dd.HH.MM.SS');
+        text = '';
+        if(car&&grid)
+            text = 'Car&Grid';
+        elseif(car&&~grid)
+            text = 'Car';
+        elseif(grid&&~car)
+            text = 'Grid';
         end
-        date = datestr(now,'yyyy.mm.dd.HH.MM.SS.FFF');
-        save(['Data/' date '.mat'],'L','N','T','dt','alpha','nu','mu','seed','int_nodes_g','min_nodes','error');
+        
+        save(sprintf('Data/%s_%s_nu=%.1d_alpha=%.0d_mu=%.0d_min_nodes=%.0d.mat',date,text,nu,alpha,mu,min_nodes),'L','N','T','dt','alpha','nu','mu','seed','min_nodes');
         
     end
-%     date = datestr(now,'yyyy.mm.dd.HH.MM.SS.FFF');
-    save('Data/min_nodes_experiment_results_mu1.mat','mu_data','nu_nodes');
+    %     date = datestr(now,'yyyy.mm.dd.HH.MM.SS.FFF');
+    scale = 'small';
+    if(nu_trials>10)
+        scale = 'large';
+    end
+    text = 'Car';
+    if(grid)
+        text = 'Grid';
+    end
+    name = sprintf('Results/%s_MinNodesResults_%s_mu=%.0d_alpha=%.0d_%sscale.mat',expDate,text,mu,alpha,scale);
+
+    save(name,'all_min_nodes','nu_nodes','mu');
 end
+%% Plot Results
+alphas  = repelem(nu_nodes,trials)';
+mins = reshape(all_min_nodes',[nu_trials*trials,1]);
+[uxy, jnk, idx] = unique([alphas,mins],'rows');
+szscale = histc(idx,unique(idx));
+%Plot Scale of 25 and stars
+scatter(uxy(:,1),uxy(:,2),'sizedata',szscale*25)
+
+hold on; 
+plot(uxy(:,1),ceil(uxy(:,1).^(-0.5)/4));
+
+set(gca,'xscale','log')
+% set(gca,'yscale','log')
+
+set(gca,'fontsize', 18);
+xlabel('Nu Values');
+ylabel('Minimum Nodes Required');
+title(sprintf('Minimum Nodes For mu=%d',mu));
+legend('Sweeping Probe','Grid');
 
 % function [x_nodes, i_nodes] = updateNodes(prev_nodes)
 % global x N direction velocity pass;

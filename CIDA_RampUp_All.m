@@ -18,8 +18,8 @@ global car grid optimal hybrid1
 if( exist('T','var') == 0)
     alpha = 1;
     %alpha = 0;
-    nu = 7.5e-6;
-%     nu = 0.001;
+%     nu = 7.5e-6;
+    nu = 0.01;
 %     nu = 6.25e-4;
 %     nu = 1.5625e-04
 
@@ -29,14 +29,15 @@ if( exist('T','var') == 0)
 %     M = .25*nu^-.5;
     M = 0.25*nu^-0.5
     min_nodes = max(ceil(M),5);
+%     min_nodes = 25;
     L = 1;
     N = 2^12;
-    mu = 300;
+    mu = 100;
     car_mu = 1;
-%    seed = randi(10000)
+   seed = randi(10000)
 %     seed = 9610
-     seed = 1263
-    T = 25;
+%      seed = 1263
+    T = 50;
 end
 
 graph = true;
@@ -47,13 +48,12 @@ hybrid1 = false;
 opt_tol = 1e-1;
 % graph = false;
 
-
 %% Initialize other constants
 
 dx = L/N;
 %x = linspace(0,L,N);
 x = 0 + dx*(0:(N-1));
-
+t_ramp = 0;
 
 %% Initial Conditions
 % seed = randi(10000);
@@ -85,7 +85,8 @@ t=0;
 global velocity direction pass
 if(car)
 %     int_nodes_c = floor(min_nodes/2);
-    int_nodes_c = min_nodes;
+%     int_nodes_c = min_nodes;
+    int_nodes_c = 40;
     i_nodes_c = 1:int_nodes_c;
     x_nodes_c = x(i_nodes_c);
 %     velocity = length(i_nodes_c);
@@ -184,7 +185,7 @@ if(graph)
     line([1e-0 N/4],[1e-15 1e-15],'Color','red');
     axis([1,N/2,1e-20,1e5]);
     set(f1, 'YDataSource','u_f(1:N/2)');
-    title ( sprintf ('Spectrum of u at time: %1.3f',t ));
+    title ( sprintf ('Spectrum of u at time: %1.3f',t-t_ramp ));
     
     %     subplot(2,2,[3 4])
     % %     e1 = plot(umv_error);
@@ -205,10 +206,10 @@ end
 % for k = 1:timesteps
 %% Ramp up
 offset = 0;
-while(max(abs(u))<.99/sqrt(alpha)&&t<T)
+while(max(abs(u))<.8/sqrt(alpha)&&t<T)
     %% Graphing fft
     if (graph && mod(offset,100) == 0)
-        if(~Graphing(t))
+        if(~Graphing(t,t_ramp))
             return
         end
         %     pause;
@@ -225,10 +226,12 @@ while(max(abs(u))<.99/sqrt(alpha)&&t<T)
     u_f = abs(fft(u)/N);
     %     umv_error(offset) = sqrt(dx)*norm(u-v);
 end
+offset = 0;
 if t >= T
     close all;
     return
 end
+t_ramp = t;
 error_DA_c = zeros(1,timesteps-offset);
 error_DA_g = zeros(1,timesteps-offset);
 error_DA_o = zeros(1,timesteps-offset);
@@ -368,7 +371,7 @@ for k = 1:timesteps-offset
     end
     %     if(max(u)> 0.9/sqrt(alpha)&&graph && mod(k,5) == 0
     if(graph && mod(k,show) == 0)
-        if(~Graphing(t))
+        if(~Graphing(t,t_ramp))
             return
         end
     end
@@ -378,17 +381,17 @@ end
 if(graph)
     figure
     if(grid)
-        subplot(1,3,1)
+%         subplot(1,3,1)
         semilogy(dt*(offset):dt:T, error_DA_g);
     end
     hold on;
     if(car)
-        subplot(1,3,2)
+%         subplot(1,3,2)
         semilogy(dt*(offset):dt:T, error_DA_c);
     end
     hold on;
     if(optimal)
-        subplot(1,3,3)
+%         subplot(1,3,3)
         semilogy(dt*(offset):dt:T, error_DA_o);
         int_nodes_o
     end
@@ -441,7 +444,7 @@ end
 %     %     i_nodes = unique([prev_nodes,n]);
 % end
 end
-function [check] = Graphing(t)
+function [check] = Graphing(t,t_ramp)
 global h1 h2_g h2_c h2_o hybrid1_graph h3 h4 h5 f1 e1 hybrid1_grid
 global grid car optimal ramp hybrid1
 global x u_f u v error_DA int_nodes N x_nodes_c x_nodes_g x_nodes_o x_nodes_h1c x_nodes_h1g umv_error v_g v_c v_o v_h1
@@ -469,13 +472,13 @@ if(hybrid1)
     refreshdata(hybrid1_grid,'caller');
 end
 % refreshdata;
-title ( sprintf ('u(x ,%1.3f)',t ));
+title ( sprintf ('u(x ,%1.3f)',t-t_ramp ));
 %         drawnow;
 %
 subplot(1,2,2);
 refreshdata(f1,'caller');
 % refreshdata;
-title ( sprintf ('Spectrum of u at time: %1.3f',t ));
+title ( sprintf ('Spectrum of u at time: %1.3f',t-t_ramp ));
 
 % subplot(2,2,[3 4]);
 % refreshdata(e1,'caller');

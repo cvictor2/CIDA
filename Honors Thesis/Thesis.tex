@@ -1,0 +1,428 @@
+% \RequirePackage[l2tabu, orthodox]{nag}
+%% Checks for obsolete LaTeX packages and outdated commands. 
+%% Does nothing as long as your syntax is right.
+
+\documentclass[12pt]{amsart}
+
+
+
+
+% Document class possibilities:
+%   amsart, article, book, beamer, report, letter
+% Options:
+%   letterpaper, a4paper,11pt,oneside, twoside, draft, twocolumn, landscape
+
+%% For beamer class, see my beamer template.
+
+%% ========== Options to Toggle When Compiling ==============
+%\usepackage{syntonly}
+%\syntaxonly
+
+
+%%%%%%% Show Keys %%%%%%%%%%%%%%%%%%%
+%\usepackage[notcite]{showkeys} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Show tags and labels.
+% %\usepackage{layout}            %% Show variable values controlling page layout.
+%\allowdisplaybreaks[1]         %% Allow multiline displays to split.
+%\nobibliography     %% Use proper citations, but do not generate bibliography.
+
+%% ========== Select *.tex file encoding and language ==============
+%\usepackage[language]{babel} %% Takes care of all language requirements.
+
+%\usepackage[latin1]{inputenc}  %% Use with PuTTY or TeXMaker
+%\usepackage[utf8]{inputenc}  %% Use on most OS's, such as Ubuntu.
+
+%% ============== Page Styles ==============
+% \usepackage{fancyhdr}
+% \pagestyle{fancy}
+% \pagestyle{empty}
+
+%% ============== Page Layout ==============
+%% Allow extra space at the bottom of pages.
+% \raggedbottom     
+
+%% Use smaller margins.
+%\usepackage{fullpage}
+
+%%Control page number placement.  \thepage is the current page number.
+% \renewcommand{\headrulewidth}{0pt}
+% \lhead{}
+% \chead{}
+% \rhead{}
+% \lfoot{}
+% \cfoot{\thepage}
+% \rfoot{}
+
+\usepackage[margin=1in]{geometry}  %% Can adjust the margins of individual pages
+%% Use it like this:
+%% \newgeometry{left=3cm,bottom=0.1cm}
+%%     ... Lines that require margins adjusted ...
+%% \restoregeometry
+
+%% ============== Math Packages ==============
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools} % An improvement of amsmath
+\usepackage{latexsym}
+
+%% ============ Typesetting add-ons ============
+%\usepackage{siunitx} %Support for SI units, \num, \SI, etc.
+
+%% ============== Single-Use Packages ==============
+\usepackage{enumerate}
+\usepackage{cancel}
+\usepackage{cases}
+\usepackage{empheq}
+\usepackage{multicol}
+
+%% ============== Graphics Packages ==============
+\usepackage{graphicx} %% Conflicts with pdflatex.
+%\usepackage{graphics} %% Conflicts with eps files.
+%\usepackage{epsfig} Allows eps files (?)
+
+\usepackage{wrapfig}
+
+%% Note: For using .eps graphics, use the graphicx package,
+%% and in the document use, for example:
+%% \begin{figure}
+%%  \includegraphics[scale=0.5]{my_picture.eps}
+%% \end{figure}
+
+%% Prevent figures from appearing on a page by themselves:
+%\renewcommand{\topfraction}{0.85}
+%\renewcommand{\textfraction}{0.1}
+%\renewcommand{\floatpagefraction}{0.75}
+
+%% Force floats to always appear after their definition: 
+%\usepackage{flafter}
+
+%% ============== tikZ and PGF packages ==============
+%\usepackage{ltxtable,tabularx,tabulary}
+ 
+% \usepackage{tikz}
+% \usepackage{pgf}
+% \usepackage{pgfplots} %% Requires pgf 2.0 or later.
+% % \usetikzlibrary{arrows, automata, backgrounds, calendar, 
+% % chains,matrix, mindmap, patterns, petri, shadows, 
+% % shapes.geometric,shapes.misc,
+% % spy, trees}
+% \pgfplotsset{compat=1.9} % Fixes some backwards compatibility warnings
+% \usetikzlibrary{arrows}
+
+%% ============== Colors ==============
+%% Warning: These are often a source of conflicts during compilation.
+\usepackage{color}
+\newcommand{\blue}[1]{{\color{blue} #1}}
+\newcommand{\red}[1]{{\color{red} #1}}
+
+%% ============== Notes ==============
+\usepackage[color=white,linecolor=black]{todonotes}
+% \usepackage[backgroundcolor=gray!30,linecolor=black]{todonotes}
+% \usepackage[disable]{todonotes}
+%\listoftodos, \todo[noline]{}, \todo[inline]{}, \todo{}, \missingfigure{}
+% \todo]{}
+   
+%% ============== Fonts ==============
+%\usepackage{bbm}  %% Non-Vanilla: Not include in many LaTeX distributions.
+\usepackage{mathrsfs}
+\usepackage{fontenc} %T1 font encoding
+\usepackage{inputenc} %UTF-8 support
+%\usepackage{babel} %Language specific commands, shortcuts, hyphenation.
+
+\usepackage{verbatim}
+
+%% Microtype improves spacing.  Load after fonts.
+% \usepackage{microtype}
+
+%% ============== Theorem Styles ==============
+%% Note: newtheorem* prevents numbering.
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem*{claim}{Claim}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{axiom}[theorem]{Axiom}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+%% ============== References ==============
+\setcounter{secnumdepth}{3} %% Used to label subsections
+\numberwithin{equation}{section} %% Equation numbering control.
+\numberwithin{figure}{section}   %% Figure numbering control.
+
+\usepackage[square,comma,numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true, pdfborder={ 00 0}]{hyperref}
+\hypersetup{urlcolor=blue, citecolor=red}
+\usepackage{url}
+
+%% Reference things as 'fig. 1', 'Lemma 7', etc.
+% \usepackage{cleveref}
+
+%% Create references like 'on the following page', 'on page 23'
+% \usepackage{varioref} 
+
+% usepackage[refpages]{gloss} %% Glossary
+
+%%%%%%%%%%%%%%%%%%%%% MACROS %%%%%%%%%%%%%%%%%%%%%
+
+% ============================== Vectors ==============================
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\bi}{\vect{i}}
+\newcommand{\bj}{\vect{j}}
+\newcommand{\bk}{\vect{k}}
+
+\newcommand{\bn}{\vect{n}}
+
+\newcommand{\bu}{\vect{u}}
+\newcommand{\bv}{\vect{v}}
+\newcommand{\bw}{\vect{w}}
+\newcommand{\boldm}{\vect{m}}
+\newcommand{\bx}{\vect{x}}
+\newcommand{\by}{\vect{y}}
+\newcommand{\bz}{\vect{z}}
+
+\newcommand{\be}{\vect{e}}
+\newcommand{\bg}{\vect{g}}
+
+\newcommand{\bbf}{\vect{f}}
+
+% ==================== Fields ==================
+\newcommand{\field}[1]{\mathbb{#1}}
+\newcommand{\nN}{\field{N}}
+\newcommand{\nZ}{\field{Z}}
+\newcommand{\nQ}{\field{Q}}
+\newcommand{\nR}{\field{R}}
+\newcommand{\nC}{\field{C}}
+\newcommand{\nF}{\field{F}}
+\newcommand{\nK}{\field{K}}
+
+% ======================== Script Symbols  ========================
+\newcommand{\sL}{\mathscr L}
+\newcommand{\sH}{\mathscr H}
+\newcommand{\sG}{\mathscr G}
+
+% ====================== Caligraphic Symbols ======================
+\newcommand{\cA}{\mathcal A}
+\newcommand{\cB}{\mathcal B}
+\newcommand{\cC}{\mathcal C}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cH}{\mathcal H}
+
+\newcommand{\cK}{\mathcal K}
+\newcommand{\cL}{\mathcal L}
+
+% ======================== Fraktur Symbols  ========================
+% Note: Use mathrsfs package.
+
+\newcommand{\fm}{\mathfrak m}
+
+% ========================== Bold Symbols ==========================
+\newcommand{\bvphi}{\boldsymbol{\vphi}}
+\newcommand{\bPhi}{\boldsymbol{\Phi}}
+
+% ======================== Misc. Symbols ========================
+\newcommand{\nT}{\mathbb T}
+\newcommand{\vphi}{\varphi}
+\newcommand{\maps}{\rightarrow}
+\newcommand{\Maps}{\longrightarrow}
+\newcommand{\sand}{\quad\text{and}\quad}
+\newcommand{\QED}{\hfill$\blacksquare$}
+\newcommand{\tac}{\textasteriskcentered}
+%\newcommand{\dhr}{\m\athrel{\lhook\joinrel\relbar\kern-.8ex\joinrel\lhook\joinrel\rightarrow}}
+
+% ========================== Operations ==========================
+\newcommand{\cnj}[1]{\overline{#1}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\npd}[3]{\frac{\partial^#3 #1}{\partial #2^#3}} %\npd{f}{x}{2}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+%\newcommand\norm[1]{\left\vert\mkern-1.7mu\left\vert#1\right\vert\mkern-1.7mu\right\vert}
+%\newcommand\bnorm[1]{\bigl\vert\mkern-2mu\bigl\vert#1\bigr\vert\mkern-2mu\bigr\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\ip}[2]{\left<#1,#2\right>}
+\newcommand{\iip}[2]{\left<\left<#1,#2\right>\right>}
+\newcommand{\braket}[1]{\left<#1\right>}
+\newcommand{\pnt}[1]{\left(#1\right)}
+\newcommand{\pair}[2]{\left(#1,#2\right)}
+
+%Advection operators:
+\newcommand{\adv}[2]{(#1 #2)}
+\newcommand{\vectadv}[2]{\;#1 \otimes#2\;}
+
+% ============ Special Macros For This Paper ==================
+\newcommand{\diff}[1]{\widetilde{#1}}
+\newcommand{\bud}{\diff{\bu}}
+\newcommand{\ud}{\diff{u}}
+
+
+% \newcommand{\weaklim}[1]{\substack{\mathrm{wk\mbox{-}lim}\\[0.1ex]#1}}
+\DeclareMathOperator*{\weaklim}{wk-lim}
+
+% ========================== Norms ==========================
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\snorm}[2]{\left\|#1\right\|_{#2}}
+\newcommand{\normH}[1]{|#1|}
+\newcommand{\normV}[1]{\|#1\|}
+\newcommand{\normLp}[2]{\|#2\|_{L^{#1}}}
+\newcommand{\normHs}[2]{\|#2\|_{H^{#1}}}
+\newcommand{\normLL}[3]{\|#3\|_{L^{#1}([0,T],L^{#2})}}
+\newcommand{\normLH}[3]{\|#3\|_{L^{#1}([0,T],H^{#2})}}
+\newcommand{\normCL}[3]{\|#3\|_{C^{#1}([0,T],L^{#2})}}
+\newcommand{\normCH}[3]{\|#3\|_{C^{#1}([0,T],H^{#2})}}
+
+
+%% ============== Counters ==============
+\newcounter{my_counter}
+\setcounter{my_counter}{1} 
+
+% ================== Title Page ========================
+% Remove the author and date fields and the space associated with them
+% from the definition of maketitle.
+% \makeatletter
+% \renewcommand{\@maketitle}{
+% \newpage
+%  \null
+%  \vskip 2em%
+%  \begin{center}%
+%   {\LARGE \@title \par }%
+%  \end{center}%
+%  \par} \makeatother
+
+ % ====================== Article Information ======================
+\title[Data Assimilation for Reaction-Diffusion]{A Computational Study of Data Assimilation for a Reaction-Diffusion Equation}
+
+\date{\today}
+
+% ======================  Author Information ======================
+\author{Adam Larios}
+\address[Adam Larios]{Department of Mathematics, 
+                University of Nebraska--Lincoln,
+        Lincoln, NE 68588-0130, USA}
+\email[Adam Larios]{alarios@unl.edu}
+%
+\author{Collin Victor}
+\address[Collin Victor]{Department of Mathematics, 
+                University of Nebraska--Lincoln,
+        Lincoln, NE 68588-0130, USA}
+\email[Collin Victor]{}
+%
+
+
+\keywords{}
+\thanks{MSC 2010 Classification: }
+
+\begin{document}
+%==============================================================-
+\begin{abstract}
+ Abstract goes here. (Don't write until we are finished.)
+\end{abstract}
+\begin{titlepage}
+	\begin{center}
+		\vspace{3cm}\large
+	A Computational Study of Data Assimilation\\ for a Reaction-Diffusion Equation\\
+
+		\vspace{3cm}
+		\normalsize
+		An Undergraduate Honors Thesis\\
+		Submitted in Partial fulfillment of\\
+		University Honors Program Requirements\\
+		University of Nebraska-Lincoln
+		\vspace{3cm}
+		by\\
+	Collin Victor, BS\\
+		Mathematics and Computer Science\\
+		College of Arts and Sciences\\
+\vfill
+		\today\\
+		\vspace{3cm}
+		Faculty Mentors:\\
+		Adam Larios, PhD, Mathematics\\
+		\vspace*{3cm}
+		
+		
+	\end{center}
+\end{titlepage}
+%\maketitle
+%\thispagestyle{empty}%Gets rid of page number on first page.
+%============================================================
+
+
+\noindent
+% =====================================================================
+\section{Introduction}\label{secInt}
+% =====================================================================
+\noindent
+Introduction goes here. (Don't write until we are finished.)
+
+% =====================================================================
+\section{Preliminaries}\label{secPre}
+% =====================================================================
+\noindent
+Preliminaries section.  Put basic lemmas, theorems, and definitions here (i.e., the ones we are going to cite).
+
+Introduce Data Assimilation, the Chaffee-Infante equation, the Eyre convex splitting method
+%https://www.math.utah.edu/~eyre/research/methods/papers.html 
+
+% =====================================================================
+ \section{Main Section}\label{secNeatSection}
+% =====================================================================
+\noindent
+Main theorems, proofs, and other results go here.
+
+\subsection*{Uniform Static Grid}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.5]{DA_MinimunNodes}
+	\caption{Minimum number of nodes required for convergence}
+	\label{fig:minimunnodes}
+\end{figure}
+From \ref{fig:minimunnodes} it seems that the minimum number of nodes can be approximated by
+\begin{align*}
+M = \frac{1}{4}\nu^{-\frac{1}{2}}.
+\end{align*}
+In the worst-case scenario, it seems reasonable that $n_b$ ``blobs" are distributed uniformly across the domain. The number of nodes required for data assimilation to capture all of blobs is approximately $2n_b$, or equivalently $n_b = \frac{M}{2}$.
+
+The minimum length of each bump $\lambda$ is given by the following:
+\begin{align*}
+\lambda &=\frac{L}{n_b},\\
+&= \frac{2L}{M},\\
+&=\frac{2L}{\frac{1}{4}\nu^{-\frac{1}{2}}},\\
+& = 8L\sqrt{\nu}.\\
+\end{align*}
+
+By only using data assimilation, we have a heuristic argument for this inverse problem.
+\subsection*{Dynamic Placement in Transition Layers}
+\subsection*{Data Assimilation by a Sweeping Probe}
+\subsection*{Hybrid Methods}
+\clearpage
+% \section*{Acknowledgement}
+% \noindent
+% This research was partially supported by grant numbers... .
+% 
+ %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%\begin{scriptsize}
+\bibliographystyle{amsplain}%amsalpha%amsplain%plain%abbrv
+%\bibliographystyle{natbib}
+\bibliography{LariosBiblio}
+%\end{scriptsize}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\end{document}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
