@@ -36,7 +36,7 @@
 %\usepackage[utf8]{inputenc}  %% Use on most OS's, such as Ubuntu.
 
 %% ============== Page Styles ==============
-% \usepackage{fancyhdr}
+ \usepackage{fancyhdr}
 % \pagestyle{fancy}
 % \pagestyle{empty}
 
@@ -57,6 +57,8 @@
 % \rfoot{}
 
 \usepackage[margin=1in]{geometry}  %% Can adjust the margins of individual pages
+\usepackage{setspace}
+\usepackage{caption}
 %% Use it like this:
 %% \newgeometry{left=3cm,bottom=0.1cm}
 %%     ... Lines that require margins adjusted ...
@@ -169,7 +171,7 @@
 \usepackage{url}
 
 %% Reference things as 'fig. 1', 'Lemma 7', etc.
-% \usepackage{cleveref}
+\usepackage{cleveref}
 
 %% Create references like 'on the following page', 'on page 23'
 % \usepackage{varioref} 
@@ -282,7 +284,7 @@
 \newcommand{\normLH}[3]{\|#3\|_{L^{#1}([0,T],H^{#2})}}
 \newcommand{\normCL}[3]{\|#3\|_{C^{#1}([0,T],L^{#2})}}
 \newcommand{\normCH}[3]{\|#3\|_{C^{#1}([0,T],H^{#2})}}
-
+%\usepackage{fancyhdr}
 
 %% ============== Counters ==============
 \newcounter{my_counter}
@@ -307,17 +309,17 @@
 \date{\today}
 
 % ======================  Author Information ======================
-\author{Adam Larios}
-\address[Adam Larios]{Department of Mathematics, 
-                University of Nebraska--Lincoln,
-        Lincoln, NE 68588-0130, USA}
-\email[Adam Larios]{alarios@unl.edu}
+%\author{Adam Larios}
+%\address[Adam Larios]{Department of Mathematics, 
+%                University of Nebraska--Lincoln,
+%        Lincoln, NE 68588-0130, USA}
+%\email[Adam Larios]{alarios@unl.edu}
 %
 \author{Collin Victor}
 \address[Collin Victor]{Department of Mathematics, 
                 University of Nebraska--Lincoln,
         Lincoln, NE 68588-0130, USA}
-\email[Collin Victor]{}
+\email[Collin Victor]{collinzacharyvictor@gmail.com}
 %
 
 
@@ -325,10 +327,11 @@
 \thanks{MSC 2010 Classification: }
 
 \begin{document}
+	\doublespacing
 %==============================================================-
-\begin{abstract}
- Abstract goes here. (Don't write until we are finished.)
-\end{abstract}
+%\begin{abstract}
+% Abstract goes here. (Don't write until we are finished.)
+%\end{abstract}
 \begin{titlepage}
 	\begin{center}
 		\vspace{3cm}\large
@@ -355,59 +358,168 @@
 		
 	\end{center}
 \end{titlepage}
+% =====================================================================
+\section*{Abstract}\label{abstract}
+% =====================================================================
+This research project applied the  Azouani-Olson-Titi data assimilation algorithm \cite{AOT1,AOT2} to the 1D Chafee-Infante equation in order to investigate the potential for different grid configurations. It was discovered that for certain $\nu$ values convergence could be increased by replacing a uniform grid by a moving cluster of points. In addition to this, this study found a heuristic argument solving the inverse problem of determining the minimum length given the minimum number of nodes required for convergence. All simulations were conducted using a semi-implicit convex splitting numerical scheme \cite{Eyre} and spatial derivatives were approximated using second-order finite difference approximations. 
+
+\pagenumbering{gobble}
+\bfseries{Key Words:}
+\normalfont
+Data Assimilation, Chafee-Infante, Mathematics 
+\newpage
+\pagenumbering{arabic}
+
+% =====================================================================
+\section*{Dedication}\label{dedication}
+% =====================================================================
+\pagenumbering{gobble}
+This research was partially supported by grant numbers... .
+\todo{Official UCARE stuff goes here}
+\newpage
+\pagenumbering{arabic}
+%\maketitle
+%\begin{abstract}
+%	hello
+%\end{abstract}
 %\maketitle
 %\thispagestyle{empty}%Gets rid of page number on first page.
 %============================================================
+% =====================================================================
+%\section{Abstract}\label{abs}
+%% =====================================================================
+%\noindent
+%\begin{abstract}
+%	hhhee
+%	this is the abstract
+%\end{abstract}
 
-
-\noindent
+%\noindent
+\maketitle
+%\rhead{\thepage}
+%\thispagestyle{plain}
 % =====================================================================
 \section{Introduction}\label{secInt}
 % =====================================================================
 \noindent
-Introduction goes here. (Don't write until we are finished.)
+In many simulation-driven fields that involve real-world data, such as numerical prediction of weather on earth and on the sun, a central problem arises. Namely, initial data may be known at a small number of locations, such as the temperature or wind speed measured at weather stations. Without this data, evolving the system in time is highly error prone. Data assimilation is an approach that eliminates the need for complete initial data. Instead, it incorporates incoming data into simulations by penalizing deviations from the data, driving the system to the ``true'' solution.
+
+Classical data assimilation is based on an algorithm known as Kalman Filtering. This technique and its modifications have a long history, but it still suffers from many drawback when applied to nonlinear problems, such as those in turbulent flows. In 2013 a new approach was developed, known as the Azouani-Olson-Titi (AOT) algorithm \cite{AOT1,AOT2}. The AOT algorithm incorporates the data at the level of the underlying partial differential equation. It acts as a continuous feedback-control mechanism, using incoming data to drive the simulation to the correct solution. The algorithm is given by:
+\begin{align*}
+\frac{d}{dt}v = F(v,t) - \mu(I_h(y)-I_h(v)), &~v(0) = 0.
+\end{align*}
+Here, $\mu \geq 0$ is a constant, and $I_h$ is an interpolation operator for a grid, h. y is given by the following:
+\begin{align*}
+\frac{d}{dt}y = F(y,t),& ~y(0) = y_0.
+\end{align*}
+The number of grid points in h is a very important parameter for data assimilation. If the grid has too few points, the solution will never converge, but having more points than required adds unnecessary computational complexity. In addition to this, in real world scenarios (such as weather prediction) where these grid points are marked by censors (or weather stations), minimizing the number of grid points reduces the financial cost of censor production and placement. This study examines whether we can achieve the same level of convergence using fewer points and without sacrificing numerical stability by using different grid configurations.
+
+This study examines the potential for non-uniform sensor placement as a viable strategy for data assimilation for reaction-diffusion equations. The specific equation used in this study is the 1D Chafee-Infante equation:
+\begin{align*}
+u_t - \nu u_{xx} &= u - \alpha u^3\\
+u(x,0) &= u_0(x)
+\end{align*}
+where $\alpha>0, \nu>0$ with Dirichlet boundary conditions.
+
+Normally data assimilation uses data collected at points on a uniform grid. This study examines how the use of a moving cluster of sensors instead of a static uniform grid affects the convergence of the system to the true solution in the context of reaction-diffusion equations. By altering the placement of the nodes it is hoped that it will reduce the minimum number of grid points required for convergence to the true solution.
+
+This study has experimentally found a bound for the number of grid points in $h$ for the uniform grid required for convergence using periodic initial data. A heuristic argument for a relationship between the size of h required for convergence and the minimum length, $\lambda$, using only data assimilation was also found. In addition to this, it was found that for certain values of $\nu$ that using a moving cluster of points does in fact require fewer grid points.
+
+%This study uses a semi-implicit convex splitting scheme from \cite{Eyre} \todo{Add Bibliography entry} to recover both the actual solution and the simulated data assimilation solution. Simulations have two distinct phases, an initial ramp up phase allows the actual solution to transition to a stable state, after this the actual solution and the simulated AOT algorithm solution run in tandem using a some grid configuration of h points. After a set number of time-steps, the error is measured and the second phase is repeated using a binary search algorithm to determine the minimum number of grid points of h with sufficient convergence.    
+
+
 
 % =====================================================================
 \section{Preliminaries}\label{secPre}
 % =====================================================================
 \noindent
-Preliminaries section.  Put basic lemmas, theorems, and definitions here (i.e., the ones we are going to cite).
-
-Introduce Data Assimilation, the Chaffee-Infante equation, the Eyre convex splitting method
-%https://www.math.utah.edu/~eyre/research/methods/papers.html 
-
-% =====================================================================
- \section{Main Section}\label{secNeatSection}
-% =====================================================================
-\noindent
-Main theorems, proofs, and other results go here.
-
-\subsection*{Uniform Static Grid}
-
+The Chafee-Infante equation is given by: 
+\begin{align*}
+u_t - \nu u_{xx} = u - \alpha u^3,\\
+u(x,0) = u_0(x)
+\end{align*}
+where $\alpha>0, \nu>0$, and with Dirichlet boundary conditions. We solved this equation on a uniform grid of $N$ points distributed uniformly on $\left[0,1\right]$ using discrete time-steps of size $dt$. To ensure that initial data had a fully-resolved spectrum we used:
+\begin{align*}
+u_0 = \sum_{k=1}^{\frac{N}{4}}a_k\sin(2\pi kx)
+\end{align*}
+where $a_k$ is some integer. The Chafee-Infante equation is a good equation to use for this study because of its well-documented (?) features. Solutions to this equation have three distinct phases. The equation initially develops based on the initial data and reaches a mostly stable state. This stable state consists of large ``blobs'' of positive and negative activity with transition layers in between (see \cref{fig:example}). The system will then eventually decay to 0, although this behavior is not what we are trying to capture with data assimilation.
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.5]{DA_MinimunNodes}
-	\caption{Minimum number of nodes required for convergence}
-	\label{fig:minimunnodes}
+	\includegraphics[scale=0.15]{Example.jpg}
+	\caption{Example of a stable state solution for Chafee-Infante equation $\alpha = 1$ $\nu=1e-5$  $N = 2^{12}$}
+	\label{fig:example}
+%	\caption{}
 \end{figure}
-From \ref{fig:minimunnodes} it seems that the minimum number of nodes can be approximated by
-\begin{align*}
-M = \frac{1}{4}\nu^{-\frac{1}{2}}.
-\end{align*}
-In the worst-case scenario, it seems reasonable that $n_b$ ``blobs" are distributed uniformly across the domain. The number of nodes required for data assimilation to capture all of blobs is approximately $2n_b$, or equivalently $n_b = \frac{M}{2}$.
 
-The minimum length of each bump $\lambda$ is given by the following:
+This study uses a semi-implicit convex splitting scheme from \cite{Eyre} \todo{Add Bibliography entry} to solve for the actual solution and the simulated data assimilation solution at every time-step. The numerical scheme is given by:
 \begin{align*}
-\lambda &=\frac{L}{n_b},\\
-&= \frac{2L}{M},\\
-&=\frac{2L}{\frac{1}{4}\nu^{-\frac{1}{2}}},\\
-& = 8L\sqrt{\nu}.\\
+{U_k}^{n+1} - {U_k}^n = dt(\nu D_{xx} + 1+2\alpha){U_k}^{n+1} + dt(-2\alpha - \alpha {U_k}^{n^2}){{U_k}^n}
+\end{align*} 
+where ${U_k}^{n} = u(x_k,t_n)$ where $x_k = k dx$, $t_n = n dt$. 
+%Here $x$ is discretized into $N$ points uniformly distributed on $\left[0,1\right]$ and $t$ is given in discrete time steps of size $dt$. 
+$D_{xx}$ is the operator $\frac{\partial^2}{\partial x^2} $, here $\frac{\partial^2 {U_k}^{n+1}}{\partial x^2}$ is given by the second-order finite difference approximation $\frac{{U_{k-1}}^{n+1} - 2{U_{k}}^{n+1} + {U_{k+1}}^{n+1}}{dx^2} $. This results in the below system which needs to be solved at every time-step:
+\begin{align*}
+(1 - dt(\nu D_{xx} + 1+2\alpha)){U_k}^{n+1} =  (1+dt(-2\alpha - \alpha {U_k}^{n^2})){{U_k}^n}
+\end{align*}
+While this method requires us to solve a system of equations at each time-step, it is much more stable than other methods and allows us to have a much larger time-step than other methods. In addition to this, the resulting matrix is tri-diagonal, solving this system only has a time complexity of $O(n)$.
+
+In order to apply data assimilation, the below system needs to be solved at each time-step:
+\begin{align*}
+(1 - dt(\nu D_{xx} + 1+2\alpha)){V_k}^{n+1} =  ({V_k}^n+dt((-2\alpha{V_k}^n - \alpha {V_k}^{n^3}) +\mu(I_h(U^n) - I_h(V^n)))
+\end{align*}
+Two different types of data assimilation were tested in this study, each modifying $I_h$. The first type was the standard uniform grid, $I_h(S)$ is the linear interpolation of $S$ over a uniform grid of points. The second type used a moving cluster of points which we will refer to as a sweeping probe. Data assimilation via a sweeping probe uses $I_h(S) = I_{h(t)}(S)$. Instead of uniformly distributing $m$ points, $m$ consecutive points are used at each time-step. \\
+$h{(t_n)} = \left\{x_k |~ k\in [nm \text{ (mod } N),nm+m-1 \text{ (mod } N)] \subset\nZ \right\}$ Initially the first $m$ points are used, then at the next time-step, the next $m$ points are used. When the probe reaches the end of the domain, it wraps back around to the other side.  
+
+Simulations run for this study have two distinct phases, an initial ramp up phase allows the actual solution to transition to a stable state, after this the actual solution and the simulated AOT algorithm solution run in tandem using some grid configuration of $m$ points. After a set number of time-steps, the error is measured and the second phase is repeated using a binary search algorithm to determine the minimum value of $m$ for which there is sufficient convergence. The binary search is started on the interval $\left[2,N\right]$, this interval will always contain a minimum value of $m$ as $m=N$ will always converge and the end points ($m=2$) are required nodes for the uniform grid. 
+%In this section outline numerical scheme (eyre convex splitting theme) used and what I used this scheme for
+%finding the minimum nodes
+%Preliminaries section.  Put basic lemmas, theorems, and definitions here (i.e., the ones we are going to cite).
+%
+%Introduce Data Assimilation, the Chaffee-Infante equation, the Eyre convex splitting method
+%https://www.math.utah.edu/~eyre/research/methods/papers.html 
+
+
+% =====================================================================
+\section{Parameter Estimation}\label{secNeat1Section}
+% =====================================================================
+\noindent
+\todo{Search literature for formula for minimum length}
+In this section detail how to find the minimum length $\lambda$ using nothing but data assimilation.
+
+Through experimental trials we have found that the only requirement for consistent convergence to the true solution is to have at least one grid point in each transition layer and one in each ``blob''. It can be seen from \cref{fig:optimal} that if a transition layer does not have a grid point, the solutions may never converge. In fact by using a postereori examination of the solution, we found that if we knew where the transition layers were going to form, we can achieve convergence using this grid configuration. It seems that the most important parameter in determining the minimum number of nodes required for convergence, $M$, is the minimum length of the ``blobs'', $\lambda$. 
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.15]{Optimal.jpg}
+	\caption{Data Assimilation can converge or diverge based on one grid point $\alpha = 1$ $\nu=1e-4$ $N = 2^{12}$}
+	\label{fig:optimal}
+	%	\caption{}
+\end{figure}
+
+From repeated experiments we discovered that $M \propto \frac{1}{4}\nu^{-\frac{1}{2}}$ in the worst-case scenario (see \ref{fig:min}). The parameter $\alpha$ affects the amplitude of the solutions, but $\nu$ is directly related to the number of ``blobs'' in the solution. The most nodes (using an optimal placement) will be required when all the ``blobs'' have the same size $\lambda$. In this case, for there being $n_b$ ``blobs'' we get $\lambda = \frac{L}{n_b} $, where $L$ is the length of the domain. We also know $M = 2n_b + 1$ or equivalently $n_b = \frac{M-1}{2}$.
+\begin{align*}
+\lambda & = \frac{L}{n_b}\\
+&\approx\frac{2L}{M}\\
+&\approx\frac{8L}{\nu^{-\frac{1}{2}}}\\
+& \approx 8L\sqrt{\nu}
 \end{align*}
 
-By only using data assimilation, we have a heuristic argument for this inverse problem.
-\subsection*{Dynamic Placement in Transition Layers}
-\subsection*{Data Assimilation by a Sweeping Probe}
-\subsection*{Hybrid Methods}
+Using only principles of data assimilation we discovered a solution for the inverse problem $\lambda \approx 8L\sqrt{\nu}$.
+% =====================================================================
+ \section{Sweeping Probe Data Assimilation}\label{secNeatSection}
+% =====================================================================
+\noindent
+The main finding of this study was in the potential for sweeping data assimilation. In general it was found that for $\mu$ large enough for which the system is stable that in general far fewer nodes are required for data assimilation via a sweeping probe for sufficiently small $\nu$ (see \cref{fig:min}). Of course when $\nu$ is large it is more efficient to use a uniform grid, but there is a threshold where the methods are roughly equivalent. For $\mu =100$ this value occurs at $\nu \approx 2e-4$. For smaller $\nu$ it is more effective to use the sweeping probe while for $\nu$ larger it will be more effective to use the uniform grid. Moreover the convergence of the sweeping probe is not sensitive to the number of nodes, adding extra nodes past the minimum only serve to speed up the convergence. This is not always the case for a uniform grid as adding more points can shift the positioning of every point on the grid, meaning that convergence is not guaranteed when adding nodes. Convergence is only guaranteed for nested sets of nodes, however this matters increasing little as $M$ increases.
+
+
+\begin{figure}
+%	\missingfigure{Minimum}
+	\includegraphics[scale=0.15]{Minimum}
+	\caption{Minimum Nodes for Uniform Grid and Sweeping Probe required for convergence of 5e-15, $t=50$ units after ramp up period \\$\alpha = 1$ $N  =2^{12}$ $\mu = 100$ }
+	\label{fig:min}
+\end{figure}
+
+\section{Concluding Remarks}
+This study has established data assimilation as a viable alternative to the uniform grid.This requires far fewer points for convergence for certain $\nu$ values and doesn't require nodes to be placed in a special configuration. More work is required to determine the viability of this type of data assimilation in higher dimensions and its usability for other equations. 
 \clearpage
 % \section*{Acknowledgement}
 % \noindent
@@ -417,7 +529,7 @@ By only using data assimilation, we have a heuristic argument for this inverse p
 %\begin{scriptsize}
 \bibliographystyle{amsplain}%amsalpha%amsplain%plain%abbrv
 %\bibliographystyle{natbib}
-\bibliography{LariosBiblio}
+\bibliography{thesis}
 %\end{scriptsize}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

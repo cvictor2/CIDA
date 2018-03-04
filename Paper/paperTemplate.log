@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6100 64-bit) (preloaded format=pdflatex 2017.1.11)  22 FEB 2018 11:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6100 64-bit) (preloaded format=pdflatex 2017.1.11)  28 FEB 2018 10:36
 entering extended mode
 **./paperTemplate.tex
 (paperTemplate.tex
@@ -808,35 +808,70 @@ LaTeX Info: Redefining \nameref on input line 327.
 \@outlinefile=\write4
 \openout4 = `paperTemplate.out'.
 
+Package epstopdf Info: Source file: <DA_MinimunNodes_grid_mu=100.eps>
+(epstopdf)                    date: 2018-02-27 13:07:00
+(epstopdf)                    size: 94931 bytes
+(epstopdf)             Output file: <DA_MinimunNodes_grid_mu=100-eps-converted-
+to.pdf>
+(epstopdf)                    date: 2018-02-28 10:21:02
+(epstopdf)                    size: 19708 bytes
+(epstopdf)             Command: <epstopdf --outfile=DA_MinimunNodes_grid_mu=100
+-eps-converted-to.pdf DA_MinimunNodes_grid_mu=100.eps>
+(epstopdf)             \includegraphics on input line 364.
+Package epstopdf Info: Output file is already uptodate.
 
-<DA_MinimunNodes.png, id=42, 421.575pt x 316.0608pt>
-File: DA_MinimunNodes.png Graphic file (type png)
- <use DA_MinimunNodes.png>
-Package pdftex.def Info: DA_MinimunNodes.png used on input line 364.
-(pdftex.def)             Requested size: 210.78697pt x 158.03001pt.
+<DA_MinimunNodes_grid_mu=100-eps-converted-to.pdf, id=34, 908.39375pt x 647.418
+75pt>
+File: DA_MinimunNodes_grid_mu=100-eps-converted-to.pdf Graphic file (type pdf)
+ <use DA_MinimunNodes_grid_mu=100-eps-converted-to.pdf>
+Package pdftex.def Info: DA_MinimunNodes_grid_mu=100-eps-converted-to.pdf used 
+on input line 364.
+(pdftex.def)             Requested size: 323.9978pt x 230.91699pt.
+ [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Package epstopdf Info: Source file: <DA_MinimunNodes_Car_mu=100.eps>
+(epstopdf)                    date: 2018-02-27 12:55:32
+(epstopdf)                    size: 55732 bytes
+(epstopdf)             Output file: <DA_MinimunNodes_Car_mu=100-eps-converted-t
+o.pdf>
+(epstopdf)                    date: 2018-02-28 10:20:51
+(epstopdf)                    size: 12443 bytes
+(epstopdf)             Command: <epstopdf --outfile=DA_MinimunNodes_Car_mu=100-
+eps-converted-to.pdf DA_MinimunNodes_Car_mu=100.eps>
+(epstopdf)             \includegraphics on input line 387.
+Package epstopdf Info: Output file is already uptodate.
 
-[1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] (paperTemplate.bbl
+<DA_MinimunNodes_Car_mu=100-eps-converted-to.pdf, id=52, 392.46625pt x 304.1362
+5pt>
+File: DA_MinimunNodes_Car_mu=100-eps-converted-to.pdf Graphic file (type pdf)
+ <use DA_MinimunNodes_Car_mu=100-eps-converted-to.pdf>
+Package pdftex.def Info: DA_MinimunNodes_Car_mu=100-eps-converted-to.pdf used o
+n input line 387.
+(pdftex.def)             Requested size: 323.9978pt x 251.09184pt.
+Package hyperref Info: bookmark level for unknown todo defaults to 0 on input l
+ine 393.
+ (paperTemplate.bbl
 
 Package natbib Warning: Empty `thebibliography' environment on input line 10.
 
-) [2 <./DA_MinimunNodes.png (PNG copy)>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 401.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 401.
+) [2 <./DA_MinimunNodes_grid_mu=100-eps-converted-to.pdf>] [3 <./DA_MinimunNode
+s_Car_mu=100-eps-converted-to.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 413.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 413.
  (paperTemplate.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 401.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 401.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 413.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 413.
 Package rerunfilecheck Info: File `paperTemplate.out' has not changed.
-(rerunfilecheck)             Checksum: 3D05F6031C2CC89E33D4D95459317719;543.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 401.
+(rerunfilecheck)             Checksum: 56E8EA7BD22E249D745BD30D69EA9EFA;397.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 413.
  ) 
 Here is how much of TeX's memory you used:
- 18483 strings out of 493333
- 335359 string characters out of 3139194
- 408818 words of memory out of 3000000
- 21488 multiletter control sequences out of 15000+200000
+ 18554 strings out of 493333
+ 337112 string characters out of 3139194
+ 410018 words of memory out of 3000000
+ 21545 multiletter control sequences out of 15000+200000
  13632 words of font info for 59 fonts, out of 3000000 for 9000
  1302 hyphenation exceptions out of 8191
- 62i,10n,56p,426b,385s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 62i,10n,56p,426b,700s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Program F
 iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiK
@@ -849,9 +884,9 @@ m/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb
 gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program File
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on paperTemplate.pdf (2 pages, 215136 bytes).
+Output written on paperTemplate.pdf (3 pages, 187631 bytes).
 PDF statistics:
- 113 PDF objects out of 1000 (max. 8388607)
- 13 named destinations out of 1000 (max. 500000)
- 90 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 121 PDF objects out of 1000 (max. 8388607)
+ 14 named destinations out of 1000 (max. 500000)
+ 79 words of extra memory for PDF output out of 10000 (max. 10000000)
 

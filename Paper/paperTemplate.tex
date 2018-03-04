@@ -361,11 +361,11 @@ Main theorems, proofs, and other results go here.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.5]{DA_MinimunNodes}
+	\includegraphics[width = .9\textwidth]{DA_MinimunNodes_grid_mu=100}
 	\caption{Minimum number of nodes required for convergence}
-	\label{fig:minimunnodes}
+	\label{fig:minimungrid}
 \end{figure}
-From \ref{fig:minimunnodes} it seems that the minimum number of nodes can be approximated by
+From \ref{fig:minimungrid} it seems that the minimum number of nodes can be approximated by
 \begin{align*}
 M = \frac{1}{4}\nu^{-\frac{1}{2}}.
 \end{align*}
@@ -380,10 +380,22 @@ The minimum length of each bump $\lambda$ is given by the following:
 \end{align*}
 
 By only using data assimilation, we have a heuristic argument for this inverse problem.
-\subsection*{Dynamic Placement in Transition Layers}
-\subsection*{Data Assimilation by a Sweeping Probe}
-\subsection*{Hybrid Methods}
 
+\subsection*{Data Assimilation by a Sweeping Probe}
+\begin{figure}
+	\centering
+	\includegraphics[width = .9\textwidth]{DA_MinimunNodes_Car_mu=100}
+	\caption{Minimum number of nodes required for convergence for a sweeping probe with $\mu = 100$}
+	\label{fig:minimumcar}
+\end{figure}
+\begin{figure}
+	\centering
+\missingfigure[figwidth=6cm]{Graph of min nodes for car for each mu}
+\caption{Minimum number of nodes required for convergence for a sweeping probe}
+%\todo{Create graph showing minimum nodes for car for each mu}
+\label{minimumcar_allmu}
+\end{figure}
+Interestingly, the minimum number of nodes required for data assimilation by a sweeping probe was not uniform. The values changed depending on the value of $\mu$, as can be seen by \ref{minimumcar_allmu}.
  \section*{Acknowledgement}
  \noindent
  This research was partially supported by grant numbers... .

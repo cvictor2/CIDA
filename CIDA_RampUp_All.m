@@ -19,7 +19,7 @@ if( exist('T','var') == 0)
     alpha = 1;
     %alpha = 0;
 %     nu = 7.5e-6;
-    nu = 0.01;
+    nu = 0.0001;
 %     nu = 6.25e-4;
 %     nu = 1.5625e-04
 
@@ -27,23 +27,23 @@ if( exist('T','var') == 0)
     %     dt = 0.01;
     %     error = ;
 %     M = .25*nu^-.5;
-    M = 0.25*nu^-0.5
-    min_nodes = max(ceil(M),5);
-%     min_nodes = 25;
+%     M = 0.25*nu^-0.5
+%     min_nodes = max(ceil(M),5);
+    min_nodes = 25;
     L = 1;
     N = 2^12;
     mu = 100;
     car_mu = 1;
-   seed = randi(10000)
-%     seed = 9610
+%    seed = randi(10000)
+    seed = 1851
 %      seed = 1263
     T = 50;
 end
 
 graph = true;
-car = true;
+car = false;
 grid = true;
-optimal = false;
+optimal = true;
 hybrid1 = false;
 opt_tol = 1e-1;
 % graph = false;
@@ -96,8 +96,10 @@ if(car)
     pass = 0;
 end
 if(grid)
-    int_nodes_g = min_nodes;
-    i_nodes_g = floor(linspace(1,N-1,int_nodes_g));
+%     int_nodes_g = min_nodes;
+    i_nodes_g =[1         430         859        1201        1543        1795        2048        2302        2556        2890        3225        3660        4095];
+    int_ndoes_g = length(i_nodes_g);
+%     i_nodes_g = floor(linspace(1,N-1,int_nodes_g));
     x_nodes_g = x(i_nodes_g);
 end
 if(hybrid1)
@@ -135,7 +137,7 @@ u_f = abs(fft(u)/N);
 if(graph)
     global h1 h2_g h2_c h2_o hybrid1_graph h3 h4 h5 f1 e1 hybrid1_grid
     figure
-    subplot(1,2,1);
+%     subplot(1,2,1);
     h1 = plot(x,u_0);
     hold on;
 %     h2 = plot(x,zeros(1,N));
@@ -177,15 +179,15 @@ if(graph)
     
     %     drawnow;
     %     f = subplot(1,2,2);
-    subplot(1,2,2);
-    f1 = loglog(u_f(1:N/2));
-    hold on;
-    y1=get(gca,'ylim');
-    line([N/4 N/4],[1e-20 1e10],'Color','red');
-    line([1e-0 N/4],[1e-15 1e-15],'Color','red');
-    axis([1,N/2,1e-20,1e5]);
-    set(f1, 'YDataSource','u_f(1:N/2)');
-    title ( sprintf ('Spectrum of u at time: %1.3f',t-t_ramp ));
+%     subplot(1,2,2);
+%     f1 = loglog(u_f(1:N/2));
+%     hold on;
+%     y1=get(gca,'ylim');
+%     line([N/4 N/4],[1e-20 1e10],'Color','red');
+%     line([1e-0 N/4],[1e-15 1e-15],'Color','red');
+%     axis([1,N/2,1e-20,1e5]);
+%     set(f1, 'YDataSource','u_f(1:N/2)');
+%     title ( sprintf ('Spectrum of u at time: %1.3f',t-t_ramp ));
     
     %     subplot(2,2,[3 4])
     % %     e1 = plot(umv_error);
@@ -226,7 +228,7 @@ while(max(abs(u))<.8/sqrt(alpha)&&t<T)
     u_f = abs(fft(u)/N);
     %     umv_error(offset) = sqrt(dx)*norm(u-v);
 end
-offset = 0;
+% offset = 0;
 if t >= T
     close all;
     return
@@ -246,19 +248,24 @@ if(optimal)
 %     i_nodes_o = unique(i_nodes_o);
 %     i_nodes_o(end) = [];
 %     int_nodes_o = length(i_nodes_o);
-i_nodes_o = [1;N/2;N-1];
+% i_nodes_o = [1;N/2;N-1];
+i_nodes_o =i_nodes_g;
+i_nodes_o(3)=[];
+int_nodes_g = length(i_nodes_o);
 x_nodes_o = x(i_nodes_o);
-int_nodes_o = length(i_nodes_o);
+% int_nodes_o = length(i_nodes_o);
+% x_nodes
 %     x_nodes_0 = abs
     if(graph)
-        subplot(1,2,1);
-        h5 = scatter(x_nodes_o,zeros(1,length(x_nodes_o)),'*m');
+%         subplot(1,2,1);
+        h5 = scatter(x_nodes_o,zeros(1,length(x_nodes_o)),'+m');
         set(h5, 'XDataSource','x_nodes_o');
         h2_o = plot(x,zeros(1,N));
         set(h2_o, 'XDataSource','x');
         set(h2_o, 'YDataSource','v_o');
     end
 end
+
 % pause;
 %% Data Assimiliation
 for k = 1:timesteps-offset
@@ -296,14 +303,14 @@ for k = 1:timesteps-offset
         umv3 = u - v_o;
         if(mod(k,50)==0&&max(abs(umv3))>opt_tol)
 %             if(max(abs(umv3))>1e-5)
-                [~,newnode] = max(abs(umv3));
-                i_nodes_o = [i_nodes_o;newnode];
-                i_nodes_o = unique(i_nodes_o);
-                int_nodes_o = length(i_nodes_o);
-                x_nodes_o = x(i_nodes_o);
+%                 [~,newnode] = max(abs(umv3));
+%                 i_nodes_o = [i_nodes_o;newnode];
+%                 i_nodes_o = unique(i_nodes_o);
+%                 int_nodes_o = length(i_nodes_o);
+%                 x_nodes_o = x(i_nodes_o);
                 if(graph)
-                    subplot(1,2,1);
-                    h5 = scatter(x_nodes_o,zeros(1,length(x_nodes_o)),'*m');
+%                     subplot(1,2,1);
+                    h5 = scatter(x_nodes_o,zeros(1,length(x_nodes_o)),'+m');
                     set(h5, 'XDataSource','x_nodes_o');
                 end
 %             end
@@ -393,7 +400,7 @@ if(graph)
     if(optimal)
 %         subplot(1,3,3)
         semilogy(dt*(offset):dt:T, error_DA_o);
-        int_nodes_o
+%         int_nodes_o
     end
 end
 
@@ -448,12 +455,12 @@ function [check] = Graphing(t,t_ramp)
 global h1 h2_g h2_c h2_o hybrid1_graph h3 h4 h5 f1 e1 hybrid1_grid
 global grid car optimal ramp hybrid1
 global x u_f u v error_DA int_nodes N x_nodes_c x_nodes_g x_nodes_o x_nodes_h1c x_nodes_h1g umv_error v_g v_c v_o v_h1
-if(~ishghandle(h1)||~ishghandle(f1))%||~ishghandle(e1))
+if(~ishghandle(h1))%||~ishghandle(f1))%||~ishghandle(e1))
     check = false;
     return;
 end
 check = true;
-subplot(1,2,1);
+% subplot(1,2,1);
 refreshdata(h1,'caller');
 if(grid)
     refreshdata(h2_g,'caller');
@@ -475,10 +482,10 @@ end
 title ( sprintf ('u(x ,%1.3f)',t-t_ramp ));
 %         drawnow;
 %
-subplot(1,2,2);
-refreshdata(f1,'caller');
-% refreshdata;
-title ( sprintf ('Spectrum of u at time: %1.3f',t-t_ramp ));
+% subplot(1,2,2);
+% refreshdata(f1,'caller');
+% % refreshdata;
+% title ( sprintf ('Spectrum of u at time: %1.3f',t-t_ramp ));
 
 % subplot(2,2,[3 4]);
 % refreshdata(e1,'caller');

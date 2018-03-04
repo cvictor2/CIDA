@@ -65,21 +65,22 @@
 % plot(nu_nodes,M);
 % trials = length(min_nodes
 [nu_trials,trials] = size(all_min_nodes);
-alphas  = repelem(nu_nodes,trials)';
-mins = reshape(all_min_nodes',[nu_trials*trials,1]);
-[uxy, jnk, idx] = unique([alphas,mins],'rows');
+% alphas  = repelem(nu_nodes,trials)';
+% mins = reshape(all_min_nodes',[nu_trials*trials,1]);
+% [uxy, jnk, idx] = unique([alphas,mins],'rows');
 szscale = histc(idx,unique(idx));
 %Plot Scale of 25 and stars
-scatter(uxy(:,1),uxy(:,2),'sizedata',szscale*25)
+scatter(nu_nodes,all_min_nodes(:,1))%,'sizedata',szscale*25)
 
 hold on; 
 plot(uxy(:,1),(uxy(:,1).^(-0.5)/4));
 
 set(gca,'xscale','log')
+% set(gca,'fontsize',14);
 % set(gca,'yscale','log')
 
 set(gca,'fontsize', 18);
-xlabel('Nu Values');
-ylabel('Minimum Nodes Required');
+xlabel('\nu Values');
+ylabel('Minimum Nodes Required (M)');
 title(sprintf('Minimum Nodes For \\mu = %d',mu));
-legend('Sweeping Probe','Grid');
+legend('Uniform Grid','M = (1/4)\nu^{-1/2}');

@@ -5,6 +5,17 @@
   \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
 }
 \providecommand{\href}[2]{#2}
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{AOT1}
+Abderrahim Azouani, Eric Olson, and Edriss~S. Titi, \emph{Continuous data
+  assimilation using general interpolant observables}, J. Nonlinear Sci.
+  \textbf{24} (2014), no.~2, 277--304. \MR{3183055}
+
+\bibitem{AOT2}
+Abderrahim Azouani and Edriss~S. Titi, \emph{Feedback control of nonlinear
+  dissipative systems by finite determining parameters---a reaction-diffusion
+  paradigm}, Evol. Equ. Control Theory \textbf{3} (2014), no.~4, 579--594.
+  \MR{3274649}
 
 \end{thebibliography}
