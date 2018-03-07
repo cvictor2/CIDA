@@ -208,7 +208,7 @@ end
 % for k = 1:timesteps
 %% Ramp up
 offset = 0;
-while(max(abs(u))<.8/sqrt(alpha)&&t<T)
+while(max(abs(u))<.99/sqrt(alpha)&&t<T)
     %% Graphing fft
     if (graph && mod(offset,100) == 0)
         if(~Graphing(t,t_ramp))
@@ -228,12 +228,13 @@ while(max(abs(u))<.8/sqrt(alpha)&&t<T)
     u_f = abs(fft(u)/N);
     %     umv_error(offset) = sqrt(dx)*norm(u-v);
 end
-% offset = 0;
+offset = 0;
 if t >= T
     close all;
     return
 end
 t_ramp = t;
+% dt = 1.1*dt;
 error_DA_c = zeros(1,timesteps-offset);
 error_DA_g = zeros(1,timesteps-offset);
 error_DA_o = zeros(1,timesteps-offset);
@@ -249,9 +250,11 @@ if(optimal)
 %     i_nodes_o(end) = [];
 %     int_nodes_o = length(i_nodes_o);
 % i_nodes_o = [1;N/2;N-1];
-i_nodes_o =i_nodes_g;
-i_nodes_o(3)=[];
-int_nodes_g = length(i_nodes_o);
+% i_nodes_o =i_nodes_g;
+% i_nodes_o(3)=[]
+% int_nodes_o = length(i_nodes_o);
+i_nodes_o = [1:600,1024:N-1];
+int_nodes_o = length(i_nodes_o);
 x_nodes_o = x(i_nodes_o);
 % int_nodes_o = length(i_nodes_o);
 % x_nodes
@@ -270,7 +273,11 @@ end
 %% Data Assimiliation
 for k = 1:timesteps-offset
     
-    
+%     if(k==1000)
+%         dt = 20*dt;
+%         A = (nu/(dx^2))*gallery('tridiag',N-1,1,-2,1) + (1+2*alpha)*speye(N-1);
+%         B = speye(N-1) - dt*A;
+%     end
     t = t+dt;
     if(grid)
         umv1 = u - v_g;
@@ -308,11 +315,11 @@ for k = 1:timesteps-offset
 %                 i_nodes_o = unique(i_nodes_o);
 %                 int_nodes_o = length(i_nodes_o);
 %                 x_nodes_o = x(i_nodes_o);
-                if(graph)
-%                     subplot(1,2,1);
-                    h5 = scatter(x_nodes_o,zeros(1,length(x_nodes_o)),'+m');
-                    set(h5, 'XDataSource','x_nodes_o');
-                end
+%                 if(graph)
+% %                     subplot(1,2,1);
+%                     h5 = scatter(x_nodes_o,zeros(1,length(x_nodes_o)),'+m');
+%                     set(h5, 'XDataSource','x_nodes_o');
+%                 end
 %             end
                 
         end

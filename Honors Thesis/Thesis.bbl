@@ -1,21 +1,197 @@
-\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
-\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
-% \MRhref is called by the amsart/book/proc definition of \MR.
-\providecommand{\MRhref}[2]{%
-  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
-}
-\providecommand{\href}[2]{#2}
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{AOT1}
-Abderrahim Azouani, Eric Olson, and Edriss~S. Titi, \emph{Continuous data
-  assimilation using general interpolant observables}, J. Nonlinear Sci.
-  \textbf{24} (2014), no.~2, 277--304. \MR{3183055}
+\bibitem{Albanez_Nussenzveig_Lopes_Titi_2016}
+D.~A. Albanez, H.~J. Nussenzveig~Lopes, and E.~S. Titi.
+\newblock Continuous data assimilation for the three-dimensional
+  {N}avier--{S}tokes-$\alpha$ model.
+\newblock {\em Asymptotic Anal.}, 97(1-2):139--164, 2016.
 
-\bibitem{AOT2}
-Abderrahim Azouani and Edriss~S. Titi, \emph{Feedback control of nonlinear
-  dissipative systems by finite determining parameters---a reaction-diffusion
-  paradigm}, Evol. Equ. Control Theory \textbf{3} (2014), no.~4, 579--594.
-  \MR{3274649}
+\bibitem{Altaf_Titi_Knio_Zhao_Mc_Cabe_Hoteit_2015}
+M.~U. {Altaf}, E.~S. {Titi}, O.~M. {Knio}, L.~{Zhao}, M.~F. {McCabe}, and
+  I.~{Hoteit}.
+\newblock Downscaling the 2{D} {B}enard convection equations using continuous
+  data assimilation.
+\newblock {\em ArXiv e-prints}, Dec. 2015.
+
+\bibitem{Azouani_Olson_Titi_2014}
+A.~Azouani, E.~Olson, and E.~S. Titi.
+\newblock Continuous data assimilation using general interpolant observables.
+\newblock {\em J. Nonlinear Sci.}, 24(2):277--304, 2014.
+
+\bibitem{Azouani_Titi_2014}
+A.~Azouani and E.~S. Titi.
+\newblock Feedback control of nonlinear dissipative systems by finite
+  determining parameters---a reaction-diffusion paradigm.
+\newblock {\em Evol. Equ. Control Theory}, 3(4):579--594, 2014.
+
+\bibitem{Biswas_Martinez_2017}
+A.~Biswas and V.~R. Martinez.
+\newblock Higher-order synchronization for a data assimilation algorithm for
+  the 2{D} {N}avier--{S}tokes equations.
+\newblock {\em Nonlinear Anal. Real World Appl.}, 35:132--157, 2017.
+
+\bibitem{CHJ69}
+J.~Charney, M.~Halem, and R.~Jastrow.
+\newblock Use of incomplete historical data to infer the present state of the
+  atmosphere.
+\newblock {\em Journal of Atmospheric Science}, 26:1160--1163, 1969.
+
+\bibitem{Daley_1993_atmospheric_book}
+R.~Daley.
+\newblock {\em Atmospheric Data Analysis}.
+\newblock Cambridge Atmospheric and Space Science Series. Cambridge University
+  Press, 1993.
+
+\bibitem{Eyre_1997}
+D.~J. Eyre.
+\newblock An unconditionally stable one-step scheme for gradient systems.
+\newblock {\em http://www.math.utah.edu/~eyre/research/methods/stable.ps}.
+\newblock (unpublished article).
+
+\bibitem{Eyre_1998}
+D.~J. Eyre.
+\newblock Unconditionally gradient stable time marching the {C}ahn-{H}illiard
+  equation.
+\newblock {\em Computational and Mathematical Models of Microstructural
+  Evolution}, 53:1686--1712, 1998.
+
+\bibitem{Farhat_Jolly_Titi_2015}
+A.~Farhat, M.~S. Jolly, and E.~S. Titi.
+\newblock Continuous data assimilation for the 2{D} {B}\'enard convection
+  through velocity measurements alone.
+\newblock {\em Phys. D}, 303:59--66, 2015.
+
+\bibitem{Farhat_Lunasin_Titi_2016abridged}
+A.~Farhat, E.~Lunasin, and E.~S. Titi.
+\newblock Abridged continuous data assimilation for the 2{D} {N}avier--{S}tokes
+  equations utilizing measurements of only one component of the velocity field.
+\newblock {\em J. Math. Fluid Mech.}, 18(1):1--23, 2016.
+
+\bibitem{Farhat_Lunasin_Titi_2016benard}
+A.~Farhat, E.~Lunasin, and E.~S. Titi.
+\newblock Data assimilation algorithm for 3{D} {B\'e}nard convection in porous
+  media employing only temperature measurements.
+\newblock {\em Journal of Mathematical Analysis and Applications},
+  438(1):492--506, 2016.
+
+\bibitem{Farhat_Lunasin_Titi_2016_Charney}
+A.~Farhat, E.~Lunasin, and E.~S. Titi.
+\newblock On the {C}harney conjecture of data assimilation employing
+  temperature measurements alone: The paradigm of 3d planetary geostrophic
+  model.
+\newblock {\em arXiv:1608.04770}, 2016.
+
+\bibitem{Farhat_Lunasin_Titi_2017_Horizontal}
+A.~Farhat, E.~Lunasin, and E.~S. Titi.
+\newblock Continuous data assimilation for a {2D} {B}\'enard convection system
+  through horizontal velocity measurements alone.
+\newblock {\em Journal of Nonlinear Science}, pages 1--23, 2017.
+
+\bibitem{Foyash_Dzholli_Kravchenko_Titi_2014}
+K.~Foyash, M.~S. Dzholli, R.~Kravchenko, and {\`E}.~S. Titi.
+\newblock A unified approach to the construction of defining forms for a
+  two-dimensional system of {N}avier-{S}tokes equations: the case of general
+  interpolating operators.
+\newblock {\em Uspekhi Mat. Nauk}, 69(2(416)):177--200, 2014.
+
+\bibitem{Gesho_Olson_Titi_2015}
+M.~Gesho, E.~Olson, and E.~S. Titi.
+\newblock A computational study of a data assimilation algorithm for the
+  two-dimensional {N}avier-{S}tokes equations.
+\newblock {\em Commun. Comput. Phys.}, 19(4):1094--1110, 2016.
+
+\bibitem{GlattHoltz_Kukavica_Vicol_2014}
+N.~Glatt-Holtz, I.~Kukavica, V.~Vicol, and M.~Ziane.
+\newblock Existence and regularity of invariant measures for the three
+  dimensional stochastic primitive equations.
+\newblock {\em J. Math. Phys.}, 55(5):051504, 34, 2014.
+
+\bibitem{Grant_1995}
+C.~P. Grant and E.~S. Van~Vleck.
+\newblock Slowly-migrating transition layers for the discrete {A}llen-{C}ahn
+  and {C}ahn-{H}illiard equations.
+\newblock {\em Nonlinearity}, 8(5):861--876, 1995.
+
+\bibitem{Jolly_Martinez_Titi_2017}
+M.~S. Jolly, V.~R. Martinez, and E.~S. Titi.
+\newblock A data assimilation algorithm for the subcritical surface
+  quasi-geostrophic equation.
+\newblock {\em Adv. Nonlinear Stud.}, 17(1):167--192, 2017.
+
+\bibitem{Jolly_Sadigov_Titi_2015}
+M.~S. Jolly, T.~Sadigov, and E.~S. Titi.
+\newblock A determining form for the damped driven nonlinear {S}chr\"odinger
+  equation---{F}ourier modes case.
+\newblock {\em J. Differential Equations}, 258(8):2711--2744, 2015.
+
+\bibitem{Kalnay_2003_DA_book}
+E.~Kalnay.
+\newblock {\em Atmospheric Modeling, Data Assimilation and Predictability}.
+\newblock Cambridge University Press, 2003.
+
+\bibitem{Larios_Lunasin_Titi_2015}
+A.~Larios, E.~Lunasin, and E.~S. Titi.
+\newblock Global well-posedness for the {B}oussinesq-{V}oigt equations.
+\newblock (preprint) arXiv:1010.5024.
+
+\bibitem{Larios_Pei_2017_KSE_DA_NL}
+A.~Larios and Y.~Pei.
+\newblock Nonlinear continuous data assimilation.
+\newblock (submitted) arXiv:1703.03546.
+
+\bibitem{Law_Stuart_Zygalakis_2015_book}
+K.~Law, A.~Stuart, and K.~Zygalakis.
+\newblock {\em A {M}athematical {I}ntroduction to {D}ata {A}ssimilation},
+  volume~62 of {\em Texts in Applied Mathematics}.
+\newblock Springer, Cham, 2015.
+
+\bibitem{Lunasin_Titi_2015}
+E.~Lunasin and E.~S. Titi.
+\newblock Finite determining parameters feedback control for distributed
+  nonlinear dissipative systems - a computational study.
+\newblock arXiv:1506.03709 [math.AP], (submitted).
+
+\bibitem{Markowich_Titi_Trabelsi_2016}
+P.~A. Markowich, E.~S. Titi, and S.~Trabelsi.
+\newblock Continuous data assimilation for the three-dimensional
+  {B}rinkman--{F}orchheimer-extended {D}arcy model.
+\newblock {\em Nonlinearity}, 29(4):1292, 2016.
+
+\bibitem{Mondaini_Titi_2017}
+C.~F. {Mondaini} and E.~S. {Titi}.
+\newblock Postprocessing {G}alerkin method applied to a data assimilation
+  algorithm: a uniform in time error estimate.
+\newblock 2016.
+\newblock (arXiv 1612.06998).
+
+\bibitem{Mondaini_Titi_2018_SIAM_NA}
+C.~F. Mondaini and E.~S. Titi.
+\newblock Uniform-in-time error estimates for the postprocessing {G}alerkin
+  method applied to a data assimilation algorithm.
+\newblock {\em SIAM J. Numer. Anal.}, 56(1):78--110, 2018.
+
+\bibitem{Cohen_2000}
+A.~Novick-Cohen.
+\newblock Triple-junction motion for an {A}llen-{C}ahn/{C}ahn-{H}illiard
+  system.
+\newblock {\em Phys. D}, 137(1-2):1--24, 2000.
+
+\bibitem{Shen_2010}
+J.~Shen and X.~Yang.
+\newblock Numerical approximations of {A}llen-{C}ahn and {C}ahn-{H}illiard
+  equations.
+\newblock {\em Discrete Contin. Dyn. Syst.}, 28(4):1669--1691, 2010.
+
+\bibitem{Shirakawa_2005}
+K.~Shirakawa and M.~Kimura.
+\newblock Stability analysis for {A}llen-{C}ahn type equation associated with
+  the total variation energy.
+\newblock {\em Nonlinear Anal.}, 60(2):257--282, 2005.
+
+\bibitem{Ward_1996}
+M.~J. Ward.
+\newblock Metastable bubble solutions for the {A}llen-{C}ahn equation with mass
+  conservation.
+\newblock {\em SIAM J. Appl. Math.}, 56(5):1247--1279, 1996.
 
 \end{thebibliography}

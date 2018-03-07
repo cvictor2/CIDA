@@ -65,10 +65,10 @@
 % plot(nu_nodes,M);
 % trials = length(min_nodes
 [nu_trials,trials] = size(all_min_nodes);
-% alphas  = repelem(nu_nodes,trials)';
-% mins = reshape(all_min_nodes',[nu_trials*trials,1]);
-% [uxy, jnk, idx] = unique([alphas,mins],'rows');
-szscale = histc(idx,unique(idx));
+alphas  = repelem(nu_nodes,trials)';
+mins = reshape(all_min_nodes',[nu_trials*trials,1]);
+[uxy, jnk, idx] = unique([alphas,mins],'rows');
+% szscale = histc(idx,unique(idx));
 %Plot Scale of 25 and stars
 scatter(nu_nodes,all_min_nodes(:,1))%,'sizedata',szscale*25)
 
