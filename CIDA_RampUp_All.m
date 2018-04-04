@@ -19,17 +19,19 @@ if( exist('T','var') == 0)
     alpha = 1;
     %alpha = 0;
 %     nu = 7.5e-6;
-    nu = 0.0001;
+%     nu = 0.0001;
+    nu = 1e-4;
 %     nu = 6.25e-4;
 %     nu = 1.5625e-04
 
     %     nu is in [7.5e-6,0.01]
-    %     dt = 0.01;
+%         dt = 0.02;
     %     error = ;
 %     M = .25*nu^-.5;
 %     M = 0.25*nu^-0.5
 %     min_nodes = max(ceil(M),5);
-    min_nodes = 25;
+%     min_nodes = 25;
+    min_nodes = 15;
     L = 1;
     N = 2^12;
     mu = 100;
@@ -86,7 +88,7 @@ global velocity direction pass
 if(car)
 %     int_nodes_c = floor(min_nodes/2);
 %     int_nodes_c = min_nodes;
-    int_nodes_c = 40;
+%     int_nodes_c = 10;
     i_nodes_c = 1:int_nodes_c;
     x_nodes_c = x(i_nodes_c);
 %     velocity = length(i_nodes_c);
@@ -96,7 +98,7 @@ if(car)
     pass = 0;
 end
 if(grid)
-%     int_nodes_g = min_nodes;
+    int_nodes_g = min_nodes;
     i_nodes_g =[1         430         859        1201        1543        1795        2048        2302        2556        2890        3225        3660        4095];
     int_ndoes_g = length(i_nodes_g);
 %     i_nodes_g = floor(linspace(1,N-1,int_nodes_g));
@@ -208,7 +210,8 @@ end
 % for k = 1:timesteps
 %% Ramp up
 offset = 0;
-while(max(abs(u))<.99/sqrt(alpha)&&t<T)
+
+while(max(abs(u))<.8/sqrt(alpha)&&t<T)
     %% Graphing fft
     if (graph && mod(offset,100) == 0)
         if(~Graphing(t,t_ramp))
@@ -253,7 +256,7 @@ if(optimal)
 % i_nodes_o =i_nodes_g;
 % i_nodes_o(3)=[]
 % int_nodes_o = length(i_nodes_o);
-i_nodes_o = [1:600,1024:N-1];
+i_nodes_o = [1:580,1050:N-1];
 int_nodes_o = length(i_nodes_o);
 x_nodes_o = x(i_nodes_o);
 % int_nodes_o = length(i_nodes_o);
@@ -428,6 +431,8 @@ elseif(prev_nodes(end)+direction*velocity >= N-1)
 else
     i_nodes = prev_nodes+direction*velocity;
     x_nodes = x(i_nodes);
+    
+    
         
 end
 % if(min(abs(v)) < 1)

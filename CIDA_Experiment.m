@@ -16,19 +16,21 @@ global car grid optimal
 expDate = datestr(now,'yyyy.mm.dd.HH.MM.SS');
 
 %% Experiment Parameters
-nu_trials = 20;
-trials = 1;
-nu_nodes = logspace(log10(0.01),log10(7.5e-6),nu_trials);
+nu_trials = 1;
+trials = 50;
+% nu_nodes = logspace(log10(0.01),log10(7.5e-6),nu_trials);
+nu_nodes = 7.5e-6;
 
 %Storage Variables
 all_min_nodes = zeros(length(nu_nodes),trials);
+
 for(trials_nu = 1:nu_trials)
     %% Load Variables
     alpha = 1;
     %alpha = 0;
     %     nu = 7.5e-6;
     nu = nu_nodes(trials_nu);
-    mu = 50;
+    mu = 100;
     %     dt = 0.01;
     %     error = ;
     %     min_nodes = 10;
@@ -58,10 +60,10 @@ for(trials_nu = 1:nu_trials)
     %x = linspace(0,L,N);
     x = 0 + dx*(0:(N-1));
     
-    
+    seed = randi(10000);
     %% Initial Conditions
-    for(trials_repeated = 1:trials)
-        seed = randi(10000);
+%     for(trials_repeated = 1:trials)
+%         seed = randi(10000);
         %         seed = 1263
         % fprintf('seed: %d\n', seed);
         rng(seed);
@@ -135,6 +137,7 @@ for(trials_nu = 1:nu_trials)
         error_DA_c = ones(1,timesteps-offset);
         error_DA_g = ones(1,timesteps-offset);
         error_DA_o = ones(1,timesteps-offset);
+        all_error = zeros(trials,timesteps-offset);
         %             error = 1;
         
         u_ramp = u;
@@ -148,7 +151,9 @@ for(trials_nu = 1:nu_trials)
         n = 0;
         %             int_nodes_g = nodes(n);
         error = 1;
-        while((endpt2 - endpt1)>1)
+        for(trials_repeated = 1:trials)
+          min_nodes = trials_repeated+5;  
+%         while((endpt2 - endpt1)>1)
             %             while(error>tol)
             %                 n=n+1;
             if(grid)
@@ -162,7 +167,8 @@ for(trials_nu = 1:nu_trials)
             end
             t = t_ramp;
             if(car)
-                int_nodes_c = floor((endpt2+endpt1)/2);
+%                 int_nodes_c = floor((endpt2+endpt1)/2);
+                int_nodes_c = min_nodes;
                 i_nodes_c = 1:int_nodes_c;
                 x_nodes_c = x(i_nodes_c);
                 velocity = int_nodes_c;
@@ -231,22 +237,24 @@ for(trials_nu = 1:nu_trials)
                 end
             end
             if(car)
-                error = (error_DA_c(end));
+%                 error = (error_DA_c(end));
+                error = error_DA_c;
                 result = int_nodes_c;
             end
             if(grid)
                 error=(error_DA_g(end));
                 result = int_nodes_g;
             end
-            if(error<tol)
-                endpt2 = result;
-            else
-                endpt1 = result;
-            end
-        end
-        min_nodes = endpt2;
+%             if(error<tol)
+%                 endpt2 = result;
+%             else
+%                 endpt1 = result;
+%             end
+%         end
+%         min_nodes = endpt2;
         %             min_nodes = result;
         all_min_nodes(trials_nu,trials_repeated) = min_nodes;
+        all_error(trials_repeated,:) = error(1:end-1);
         date = datestr(now,'yyyy.mm.dd.HH.MM.SS');
         text = '';
         if(car&&grid)
@@ -269,9 +277,9 @@ for(trials_nu = 1:nu_trials)
     if(grid)
         text = 'Grid';
     end
-    name = sprintf('Results/%s_MinNodesResults_%s_mu=%.0d_alpha=%.0d_%sscale.mat',expDate,text,mu,alpha,scale);
+    name = sprintf('Results/%s_MinNodesResults_ErrorCheck%s_mu=%.0d_alpha=%.0d_%sscale.mat',expDate,text,mu,alpha,scale);
     
-    save(name,'all_min_nodes','nu_nodes','mu');
+    save(name,'all_min_nodes','nu_nodes','mu','all_error');
 end
 %% Plot Results
 alphas  = repelem(nu_nodes,trials)';

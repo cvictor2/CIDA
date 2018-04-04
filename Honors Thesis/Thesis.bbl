@@ -7,11 +7,11 @@ D.~A. Albanez, H.~J. Nussenzveig~Lopes, and E.~S. Titi.
 \newblock {\em Asymptotic Anal.}, 97(1-2):139--164, 2016.
 
 \bibitem{Altaf_Titi_Knio_Zhao_Mc_Cabe_Hoteit_2015}
-M.~U. {Altaf}, E.~S. {Titi}, O.~M. {Knio}, L.~{Zhao}, M.~F. {McCabe}, and
-  I.~{Hoteit}.
-\newblock Downscaling the 2{D} {B}enard convection equations using continuous
+M.~U. Altaf, E.~S. Titi, T.~Gebrael, O.~M. Knio, L.~Zhao, M.~F. McCabe, and
+  I.~Hoteit.
+\newblock Downscaling the 2{D} {B}\'enard convection equations using continuous
   data assimilation.
-\newblock {\em ArXiv e-prints}, Dec. 2015.
+\newblock {\em Comput. Geosci.}, 21(3):393--410, 2017.
 
 \bibitem{Azouani_Olson_Titi_2014}
 A.~Azouani, E.~Olson, and E.~S. Titi.
@@ -36,11 +36,22 @@ J.~Charney, M.~Halem, and R.~Jastrow.
   atmosphere.
 \newblock {\em Journal of Atmospheric Science}, 26:1160--1163, 1969.
 
+\bibitem{Chen_1992}
+X.~Chen.
+\newblock Generation and propagation of interfaces for reaction-diffusion
+  equations.
+\newblock {\em J. Differential Equations}, 96(1):116--141, 1992.
+
 \bibitem{Daley_1993_atmospheric_book}
 R.~Daley.
 \newblock {\em Atmospheric Data Analysis}.
 \newblock Cambridge Atmospheric and Space Science Series. Cambridge University
   Press, 1993.
+
+\bibitem{deMottoni_1990}
+P.~de~Mottoni and M.~Schatzman.
+\newblock Development of interfaces in {${\bf R}^N$}.
+\newblock {\em Proc. Roy. Soc. Edinburgh Sect. A}, 116(3-4):207--220, 1990.
 
 \bibitem{Eyre_1997}
 D.~J. Eyre.
@@ -100,12 +111,6 @@ M.~Gesho, E.~Olson, and E.~S. Titi.
   two-dimensional {N}avier-{S}tokes equations.
 \newblock {\em Commun. Comput. Phys.}, 19(4):1094--1110, 2016.
 
-\bibitem{GlattHoltz_Kukavica_Vicol_2014}
-N.~Glatt-Holtz, I.~Kukavica, V.~Vicol, and M.~Ziane.
-\newblock Existence and regularity of invariant measures for the three
-  dimensional stochastic primitive equations.
-\newblock {\em J. Math. Phys.}, 55(5):051504, 34, 2014.
-
 \bibitem{Grant_1995}
 C.~P. Grant and E.~S. Van~Vleck.
 \newblock Slowly-migrating transition layers for the discrete {A}llen-{C}ahn
@@ -128,11 +133,6 @@ M.~S. Jolly, T.~Sadigov, and E.~S. Titi.
 E.~Kalnay.
 \newblock {\em Atmospheric Modeling, Data Assimilation and Predictability}.
 \newblock Cambridge University Press, 2003.
-
-\bibitem{Larios_Lunasin_Titi_2015}
-A.~Larios, E.~Lunasin, and E.~S. Titi.
-\newblock Global well-posedness for the {B}oussinesq-{V}oigt equations.
-\newblock (preprint) arXiv:1010.5024.
 
 \bibitem{Larios_Pei_2017_KSE_DA_NL}
 A.~Larios and Y.~Pei.
@@ -176,17 +176,19 @@ A.~Novick-Cohen.
   system.
 \newblock {\em Phys. D}, 137(1-2):1--24, 2000.
 
+\bibitem{Robinson_2001}
+J.~C. Robinson.
+\newblock {\em Infinite-{D}imensional {D}ynamical {S}ystems}.
+\newblock Cambridge Texts in Applied Mathematics. Cambridge University Press,
+  Cambridge, 2001.
+\newblock An {I}ntroduction to {D}issipative {P}arabolic {PDE}s and the
+  {T}heory of {G}lobal {A}ttractors.
+
 \bibitem{Shen_2010}
 J.~Shen and X.~Yang.
 \newblock Numerical approximations of {A}llen-{C}ahn and {C}ahn-{H}illiard
   equations.
 \newblock {\em Discrete Contin. Dyn. Syst.}, 28(4):1669--1691, 2010.
-
-\bibitem{Shirakawa_2005}
-K.~Shirakawa and M.~Kimura.
-\newblock Stability analysis for {A}llen-{C}ahn type equation associated with
-  the total variation energy.
-\newblock {\em Nonlinear Anal.}, 60(2):257--282, 2005.
 
 \bibitem{Ward_1996}
 M.~J. Ward.

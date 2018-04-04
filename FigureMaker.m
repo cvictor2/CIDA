@@ -64,6 +64,7 @@
 % scatter(unstablex,unstabley,'r');
 % plot(nu_nodes,M);
 % trials = length(min_nodes
+load('C:\Users\colli\Desktop\MATLAB\UCARE\CIDA\Results\2018.03.03.14.47.51_MinNodesResults_Grid_mu=100_alpha=1_largescale.mat')
 [nu_trials,trials] = size(all_min_nodes);
 alphas  = repelem(nu_nodes,trials)';
 mins = reshape(all_min_nodes',[nu_trials*trials,1]);
@@ -73,7 +74,17 @@ mins = reshape(all_min_nodes',[nu_trials*trials,1]);
 scatter(nu_nodes,all_min_nodes(:,1))%,'sizedata',szscale*25)
 
 hold on; 
-plot(uxy(:,1),(uxy(:,1).^(-0.5)/4));
+
+load('C:\Users\colli\Desktop\MATLAB\UCARE\CIDA\Results\2018.02.23.15.45.53_MinNodesResults_car_mu=100_alpha=1_largescale.mat')
+[nu_trials,trials] = size(all_min_nodes(:,1));
+alphas  = repelem(nu_nodes,trials)';
+% mins = reshape(all_min_nodes',[nu_trials*trials,1]);
+mins = all_min_nodes;
+[uxy, jnk, idx] = unique([alphas,mins],'rows');
+% szscale = histc(idx,unique(idx));
+scatter(nu_nodes,all_min_nodes(:,1),'.r')%,'sizedata',szscale*25)
+
+plot(uxy(:,1),((uxy(:,1).^(-0.5)/4)));
 
 set(gca,'xscale','log')
 % set(gca,'fontsize',14);
@@ -81,6 +92,6 @@ set(gca,'xscale','log')
 
 set(gca,'fontsize', 18);
 xlabel('\nu Values');
-ylabel('Minimum Nodes Required (M)');
+ylabel('Minimum Nodes Required (m_h)');
 title(sprintf('Minimum Nodes For \\mu = %d',mu));
-legend('Uniform Grid','M = (1/4)\nu^{-1/2}');
+legend('Uniform Grid','Sweeping Probe','m_h = (1/4)\nu^{-1/2}');
