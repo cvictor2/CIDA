@@ -43,7 +43,7 @@ if( exist('T','var') == 0)
 end
 
 graph = true;
-car = false;
+car = true;
 grid = true;
 optimal = true;
 hybrid1 = false;
@@ -88,7 +88,7 @@ global velocity direction pass
 if(car)
 %     int_nodes_c = floor(min_nodes/2);
 %     int_nodes_c = min_nodes;
-%     int_nodes_c = 10;
+    int_nodes_c = 10;
     i_nodes_c = 1:int_nodes_c;
     x_nodes_c = x(i_nodes_c);
 %     velocity = length(i_nodes_c);
