@@ -1,0 +1,511 @@
+<!-- saved from url=(0014)about:internet -->
+<div class="dead">
+<pre class="code">
+<span class="srcline"><span class="lineno"><a href="1,1" id="srcline1">  1</a></span><span class="line">function [param, vars] = CIDA_Function()</span></span>
+<span class="srcline"><span class="lineno"><a href="1,2" id="srcline2">  2</a></span><span class="line"><span class="comment">%function Chafee_Infante(N1,T,nui,alphai,graph)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,3" id="srcline3">  3</a></span><span class="line"><span class="comment">%Chafee-Infante eq. u_t - nu*u_xx = u - alpha*u^3</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,4" id="srcline4">  4</a></span><span class="line"><span class="comment">%basic constants defined by problem</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,5" id="srcline5">  5</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,6" id="srcline6">  6</a></span><span class="line"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,7" id="srcline7">  7</a></span><span class="line"><span class="comment">%Solves Chafee-Infante equation using data assimilation on a uniform grid</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,8" id="srcline8">  8</a></span><span class="line"><span class="comment">%</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,9" id="srcline9">  9</a></span><span class="line"><span class="comment">%Meant to use loaded data from Data directory</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,10" id="srcline10"> 10</a></span><span class="line"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,11" id="srcline11"> 11</a></span><span class="line"><span class="comment">% close all; clear all;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,12" id="srcline12"> 12</a></span><span class="line"><span class="comment">% close all;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,13" id="srcline13"> 13</a></span><span class="line"><span class="comment">% clear all;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,14" id="srcline14"> 14</a></span><span class="line"><span class="comment">% param = struct; %All of the parameters for this problem: alpha, nu, min_nodes, L, N, mu</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,15" id="srcline15"> 15</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,16" id="srcline16"> 16</a></span><span class="line"><span class="comment">%% Load Variables</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,17" id="srcline17"> 17</a></span><span class="line"><span class="comment">% load('Data\2018.01.23.01.24.03.575.mat')</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,18" id="srcline18"> 18</a></span><span class="line"><span class="comment">% load('Data/Overhauled/2018.04.10.23.18.30_Initial_Ramp_Only_nu=1.0e-04_alpha=1_mu=100.mat')</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,19" id="srcline19"> 19</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,20" id="srcline20"> 20</a></span><span class="line">graph = true;           <span class="comment">%Display Graphs</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,21" id="srcline21"> 21</a></span><span class="line">save_check = false;     <span class="comment">%Save data after ramp up and at end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,22" id="srcline22"> 22</a></span><span class="line">reset_vars = true;      <span class="comment">%Override loaded variable configurations with new definitions</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,23" id="srcline23"> 23</a></span><span class="line">    alpha = 1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,24" id="srcline24"> 24</a></span><span class="line">    nu = 7.5e-6;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,25" id="srcline25"> 25</a></span><span class="line">    <span class="comment">%     nu is in [7.5e-6,0.01]</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,26" id="srcline26"> 26</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,27" id="srcline27"> 27</a></span><span class="line">    L = 1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,28" id="srcline28"> 28</a></span><span class="line">    N = 2^12;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,29" id="srcline29"> 29</a></span><span class="line">    mu = 200;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,30" id="srcline30"> 30</a></span><span class="line">    min_nodes = max(ceil(.25*nu^-.5),5);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,31" id="srcline31"> 31</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,32" id="srcline32"> 32</a></span><span class="line">    seed = randi(10000)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,33" id="srcline33"> 33</a></span><span class="line"><span class="comment">%          seed = 7263</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,34" id="srcline34"> 34</a></span><span class="line">         T_ramp = 10;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,35" id="srcline35"> 35</a></span><span class="line">    T = 15;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,36" id="srcline36"> 36</a></span><span class="line">    <span class="comment">%     param = struct('alpha',alpha,'nu',nu,'L',L,'mu',mu,'min_nodes',min_nodes,'seed',seed,'T',T);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,37" id="srcline37"> 37</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,38" id="srcline38"> 38</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,39" id="srcline39"> 39</a></span><span class="line">    <span class="comment">%% Initialize other constants</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,40" id="srcline40"> 40</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,41" id="srcline41"> 41</a></span><span class="line">    dx = L/N;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,42" id="srcline42"> 42</a></span><span class="line">    <span class="comment">%x = linspace(0,L,N);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,43" id="srcline43"> 43</a></span><span class="line">    x = 0 + dx*(0:(N-1));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,44" id="srcline44"> 44</a></span><span class="line">    t_ramp = 0;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,45" id="srcline45"> 45</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,46" id="srcline46"> 46</a></span><span class="line">    dt = .001; <span class="comment">%0.001;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,47" id="srcline47"> 47</a></span><span class="line">    timesteps = ceil(T/dt);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,48" id="srcline48"> 48</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,49" id="srcline49"> 49</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,50" id="srcline50"> 50</a></span><span class="line">    <span class="comment">%% Initial Conditions</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,51" id="srcline51"> 51</a></span><span class="line">    <span class="comment">% seed = randi(10000);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,52" id="srcline52"> 52</a></span><span class="line">    <span class="comment">% fprintf('seed: %d\n', seed);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,53" id="srcline53"> 53</a></span><span class="line">    rng(seed);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,54" id="srcline54"> 54</a></span><span class="line">    a = (10^(0))*randn(1,floor(N/5));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,55" id="srcline55"> 55</a></span><span class="line">    k = 1:1:floor(N/5);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,56" id="srcline56"> 56</a></span><span class="line">    u_0 = zeros(1,N);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,57" id="srcline57"> 57</a></span><span class="line">    for i = 1:floor(N/5)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,58" id="srcline58"> 58</a></span><span class="line">        u_0 = u_0 + (a(i)*sin(2*pi*k(i)*x/L));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,59" id="srcline59"> 59</a></span><span class="line">    end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,60" id="srcline60"> 60</a></span><span class="line">    u_0 = u_0/(norm(u_0)*sqrt(dx))*10^-3;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,61" id="srcline61"> 61</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,62" id="srcline62"> 62</a></span><span class="line">    <span class="comment">% dt = dx/(1/sqrt(alpha)); % CFL, Courant Fredrich Lewy number for advection</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,63" id="srcline63"> 63</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,64" id="srcline64"> 64</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,65" id="srcline65"> 65</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,66" id="srcline66"> 66</a></span><span class="line">    u = u_0';</span></span>
+<span class="srcline"><span class="lineno"><a href="1,67" id="srcline67"> 67</a></span><span class="line">    ui = u(2:N);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,68" id="srcline68"> 68</a></span><span class="line">    t=0;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,69" id="srcline69"> 69</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,70" id="srcline70"> 70</a></span><span class="line">    <span class="comment">%% Initialize Param</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,71" id="srcline71"> 71</a></span><span class="line">    param = struct('alpha',alpha,'nu',nu,'L',L, 'N',N,'mu',mu,'min_nodes',min_nodes,'seed',seed,'T',T, 't', t, 'dt', dt, 'x', x, 'dx', dx, 'u_0', u_0, 't_ramp',t_ramp,'t_adj',t-t_ramp,'u_ramp',u_0, 'timesteps',timesteps);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,72" id="srcline72"> 72</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,73" id="srcline73"> 73</a></span><span class="line">    <span class="comment">%% Ramp up</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,74" id="srcline74"> 74</a></span><span class="line">    offset = 0;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,75" id="srcline75"> 75</a></span><span class="line">    u_solo = struct('u',u,'type',0);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,76" id="srcline76"> 76</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,77" id="srcline77"> 77</a></span><span class="line">    <span class="comment">% Convex Splitting Method</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,78" id="srcline78"> 78</a></span><span class="line">    nOnes = ones(N-1, 1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,79" id="srcline79"> 79</a></span><span class="line">    C = -2*diag(nOnes, 0) + diag(nOnes(1:N-2), -1) + 1*diag(nOnes(1:N-2), 1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,80" id="srcline80"> 80</a></span><span class="line"><span class="comment">%     C = sparse(C);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,81" id="srcline81"> 81</a></span><span class="line">    A = (nu/(dx^2))*C + (1+2*alpha)*eye(N-1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,82" id="srcline82"> 82</a></span><span class="line">    B = eye(N-1) - dt*A;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,83" id="srcline83"> 83</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,84" id="srcline84"> 84</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,85" id="srcline85"> 85</a></span><span class="line">    while(max(abs(u))&lt;.8/sqrt(alpha)&amp;&amp;t&lt;T_ramp-dt)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,86" id="srcline86"> 86</a></span><span class="line">        </span></span>
+<span class="srcline"><span class="lineno"><a href="1,87" id="srcline87"> 87</a></span><span class="line"><span class="comment">%         if (graph &amp;&amp; mod(offset,200) == 0)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,88" id="srcline88"> 88</a></span><span class="line"><span class="comment">%             if(~Graphing_Overhaul(param,u_solo,[]))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,89" id="srcline89"> 89</a></span><span class="line"><span class="comment">%                 return</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,90" id="srcline90"> 90</a></span><span class="line"><span class="comment">%             end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,91" id="srcline91"> 91</a></span><span class="line"><span class="comment">%             %     pause;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,92" id="srcline92"> 92</a></span><span class="line"><span class="comment">%         end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,93" id="srcline93"> 93</a></span><span class="line">        </span></span>
+<span class="srcline"><span class="lineno"><a href="1,94" id="srcline94"> 94</a></span><span class="line">        <span class="comment">%solves pde</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,95" id="srcline95"> 95</a></span><span class="line">        offset = offset +1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,96" id="srcline96"> 96</a></span><span class="line">        t = t+dt;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,97" id="srcline97"> 97</a></span><span class="line">        param.t = t;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,98" id="srcline98"> 98</a></span><span class="line"><span class="comment">%         param.t_adj = t - t_ramp;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,99" id="srcline99"> 99</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,100" id="srcline100">100</a></span><span class="line">        <span class="comment">%     umv = u - v;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,101" id="srcline101">101</a></span><span class="line">        <span class="comment">%error_DA(k) = sqrt(dx)*norm(umv);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,102" id="srcline102">102</a></span><span class="line">        ui = B\(ui.*(ones(N-1,1)+dt.*(alpha.*(-2-(ui.^2))))); <span class="comment">%Convex Splitting Method</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,103" id="srcline103">103</a></span><span class="line">        u(2:N) = ui;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,104" id="srcline104">104</a></span><span class="line">        u_solo.u = u;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,105" id="srcline105">105</a></span><span class="line"><span class="comment">%         u_f = abs(fft(u)/N);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,106" id="srcline106">106</a></span><span class="line">        <span class="comment">%     umv_error(offset) = sqrt(dx)*norm(u-v);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,107" id="srcline107">107</a></span><span class="line">    end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,108" id="srcline108">108</a></span><span class="line">    t_ramp = t;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,109" id="srcline109">109</a></span><span class="line">    param.t_ramp = t_ramp;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,110" id="srcline110">110</a></span><span class="line">    param.t_adj = t-t_ramp;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,111" id="srcline111">111</a></span><span class="line">    u_ramp = u;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,112" id="srcline112">112</a></span><span class="line">    param.u_ramp = u_ramp;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,113" id="srcline113">113</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,114" id="srcline114">114</a></span><span class="line">    if(save_check)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,115" id="srcline115">115</a></span><span class="line">        date_string = datestr(now,'yyyy.mm.dd.HH.MM.SS');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,116" id="srcline116">116</a></span><span class="line">        save(sprintf('Data/Overhauled/%s_Initial_Ramp_Only_nu=%.1d_alpha=%.0d_mu=%.0d.mat',date_string,nu,alpha,mu),'param');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,117" id="srcline117">117</a></span><span class="line">    end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,118" id="srcline118">118</a></span><span class="line">    vars = [];</span></span>
+<span class="srcline"><span class="lineno"><a href="1,119" id="srcline119">119</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,120" id="srcline120">120</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,121" id="srcline121">121</a></span><span class="line"><span class="comment">%% Set up variables to track</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,122" id="srcline122">122</a></span><span class="line">offset = 0; <span class="comment">%comment this out is you only want to run to time T, not time t_ramp + T</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,123" id="srcline123">123</a></span><span class="line"><span class="comment">% if(( exist('vars','var') == 0)||reset_vars)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,124" id="srcline124">124</a></span><span class="line">    <span class="comment">%Type Descriptions:</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,125" id="srcline125">125</a></span><span class="line">    <span class="comment">%   0 - Normal solution, no data assimilation</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,126" id="srcline126">126</a></span><span class="line">    <span class="comment">%   1 - Uniform Grid Data Assimilation</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,127" id="srcline127">127</a></span><span class="line">    <span class="comment">%   2 - Standard Car Data Assimilation</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,128" id="srcline128">128</a></span><span class="line">    <span class="comment">%  -1 - Retro Car, old car method</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,129" id="srcline129">129</a></span><span class="line">    <span class="comment">%   3 - Car with uniform grid along length (Hybrid Method)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,130" id="srcline130">130</a></span><span class="line"><span class="comment">%     vars = [];</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,131" id="srcline131">131</a></span><span class="line">    vars = repelem(struct('type',0,'v',zeros(size(u)),'int_nodes',10,'i_nodes', [1:10],'x_nodes',x(1:10),'error',zeros(1,timesteps-offset+1),'velocity',0,'direction',0,'length_car',10),2,1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,132" id="srcline132">132</a></span><span class="line">    i = 0;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,133" id="srcline133">133</a></span><span class="line">        <span class="comment">% Standard uniform grid setup</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,134" id="srcline134">134</a></span><span class="line">    i = i+1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,135" id="srcline135">135</a></span><span class="line">    vars(i).type = 1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,136" id="srcline136">136</a></span><span class="line">    vars(i).v = zeros(size(u));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,137" id="srcline137">137</a></span><span class="line">    vars(i).int_nodes = min_nodes;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,138" id="srcline138">138</a></span><span class="line">    vars(i).i_nodes = floor(linspace(1,N-1,vars(i).int_nodes));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,139" id="srcline139">139</a></span><span class="line">    vars(i).x_nodes = x(vars(i).i_nodes);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,140" id="srcline140">140</a></span><span class="line">    vars(i).error = zeros(1,timesteps-offset+1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,141" id="srcline141">141</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,142" id="srcline142">142</a></span><span class="line">    <span class="comment">% Standard car setup</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,143" id="srcline143">143</a></span><span class="line">    i = i+1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,144" id="srcline144">144</a></span><span class="line">    vars(i).type = 2;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,145" id="srcline145">145</a></span><span class="line">    vars(i).v = zeros(size(u));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,146" id="srcline146">146</a></span><span class="line">    vars(i).int_nodes = 30;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,147" id="srcline147">147</a></span><span class="line">    vars(i).i_nodes = 1:vars(i).int_nodes;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,148" id="srcline148">148</a></span><span class="line">    vars(i).x_nodes = x(vars(i).i_nodes);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,149" id="srcline149">149</a></span><span class="line">    vars(i).velocity = 10;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,150" id="srcline150">150</a></span><span class="line">    vars(i).direction = 1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,151" id="srcline151">151</a></span><span class="line">    vars(i).error = zeros(1,timesteps-offset+1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,152" id="srcline152">152</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,153" id="srcline153">153</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,154" id="srcline154">154</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,155" id="srcline155">155</a></span><span class="line">    <span class="comment">%Templates (Don't adjust these, just make copies if you want to use an</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,156" id="srcline156">156</a></span><span class="line">    <span class="comment">%           instance)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,157" id="srcline157">157</a></span><span class="line"><span class="comment">%     % Standard uniform grid setup</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,158" id="srcline158">158</a></span><span class="line"><span class="comment">%     i = i+1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,159" id="srcline159">159</a></span><span class="line"><span class="comment">%     vars(i).type = 1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,160" id="srcline160">160</a></span><span class="line"><span class="comment">%     vars(i).v = zeros(size(u));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,161" id="srcline161">161</a></span><span class="line"><span class="comment">%     vars(i).int_nodes = min_nodes;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,162" id="srcline162">162</a></span><span class="line"><span class="comment">%     vars(i).i_nodes = floor(linspace(1,N-1,vars(i).int_nodes));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,163" id="srcline163">163</a></span><span class="line"><span class="comment">%     vars(i).x_nodes = x(vars(i).i_nodes);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,164" id="srcline164">164</a></span><span class="line"><span class="comment">%     vars(i).error = zeros(1,timesteps-offset+1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,165" id="srcline165">165</a></span><span class="line"><span class="comment">%     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,166" id="srcline166">166</a></span><span class="line"><span class="comment">%     % Standard car setup</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,167" id="srcline167">167</a></span><span class="line"><span class="comment">%     i = i+1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,168" id="srcline168">168</a></span><span class="line"><span class="comment">%     vars(i).type = 2;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,169" id="srcline169">169</a></span><span class="line"><span class="comment">%     vars(i).v = zeros(size(u));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,170" id="srcline170">170</a></span><span class="line"><span class="comment">%     vars(i).int_nodes = 30;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,171" id="srcline171">171</a></span><span class="line"><span class="comment">%     vars(i).i_nodes = 1:vars(i).int_nodes;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,172" id="srcline172">172</a></span><span class="line"><span class="comment">%     vars(i).x_nodes = x(vars(i).i_nodes);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,173" id="srcline173">173</a></span><span class="line"><span class="comment">%     vars(i).velocity = 10;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,174" id="srcline174">174</a></span><span class="line"><span class="comment">%     vars(i).direction = 1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,175" id="srcline175">175</a></span><span class="line"><span class="comment">%     vars(i).error = zeros(1,timesteps-offset+1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,176" id="srcline176">176</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,177" id="srcline177">177</a></span><span class="line"><span class="comment">%     %Retro Car Configuration</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,178" id="srcline178">178</a></span><span class="line"><span class="comment">%     i = i+1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,179" id="srcline179">179</a></span><span class="line"><span class="comment">%     vars(i).type = -1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,180" id="srcline180">180</a></span><span class="line"><span class="comment">%     vars(i).v = zeros(size(u));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,181" id="srcline181">181</a></span><span class="line"><span class="comment">%     vars(i).length_car = 10;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,182" id="srcline182">182</a></span><span class="line"><span class="comment">%     vars(i).int_nodes = vars(i).length_car;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,183" id="srcline183">183</a></span><span class="line"><span class="comment">%     vars(i).i_nodes = 1:vars(i).int_nodes;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,184" id="srcline184">184</a></span><span class="line"><span class="comment">%     vars(i).x_nodes = x(vars(i).i_nodes);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,185" id="srcline185">185</a></span><span class="line"><span class="comment">%     vars(i).velocity = vars(i).length_car;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,186" id="srcline186">186</a></span><span class="line"><span class="comment">%     vars(i).direction = 1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,187" id="srcline187">187</a></span><span class="line"><span class="comment">%     vars(i).error = zeros(1,timesteps-offset+1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,188" id="srcline188">188</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,189" id="srcline189">189</a></span><span class="line"><span class="comment">%     %Uniform Grid on Car Configuration</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,190" id="srcline190">190</a></span><span class="line"><span class="comment">%     i = i+1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,191" id="srcline191">191</a></span><span class="line"><span class="comment">%     vars(i).type = 3;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,192" id="srcline192">192</a></span><span class="line"><span class="comment">%     vars(i).v = zeros(size(u));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,193" id="srcline193">193</a></span><span class="line"><span class="comment">%     vars(i).length_car = 10; %Length of car (in gridpoints)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,194" id="srcline194">194</a></span><span class="line"><span class="comment">%                              %Set to N to cover entire grid</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,195" id="srcline195">195</a></span><span class="line"><span class="comment">%     vars(i).int_nodes = 2;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,196" id="srcline196">196</a></span><span class="line"><span class="comment">%     vars(i).i_nodes = floor(linspace(1,vars(i).length_car, vars(i).int_nodes));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,197" id="srcline197">197</a></span><span class="line"><span class="comment">%     vars(i).x_nodes = x(vars(i).i_nodes);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,198" id="srcline198">198</a></span><span class="line"><span class="comment">%     vars(i).velocity = 10;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,199" id="srcline199">199</a></span><span class="line"><span class="comment">%     vars(i).direction = 1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,200" id="srcline200">200</a></span><span class="line"><span class="comment">%     vars(i).error = zeros(1,timesteps-offset+1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,201" id="srcline201">201</a></span><span class="line">    clear i;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,202" id="srcline202">202</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,203" id="srcline203">203</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,204" id="srcline204">204</a></span><span class="line"><span class="comment">% P = parallel.pool.Constant(param);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,205" id="srcline205">205</a></span><span class="line"><span class="comment">% P.Value.</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,206" id="srcline206">206</a></span><span class="line"><span class="comment">%% Solve System</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,207" id="srcline207">207</a></span><span class="line">for j = 1:timesteps-offset</span></span>
+<span class="srcline"><span class="lineno"><a href="1,208" id="srcline208">208</a></span><span class="line">    t = t+dt;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,209" id="srcline209">209</a></span><span class="line">    param.t = t;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,210" id="srcline210">210</a></span><span class="line">    param.t_adj = param.t_adj + dt;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,211" id="srcline211">211</a></span><span class="line"><span class="comment">%     U = parallel.pool.Constant(u);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,212" id="srcline212">212</a></span><span class="line"><span class="comment">%     U.Value;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,213" id="srcline213">213</a></span><span class="line">    <span class="comment">%update the v's</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,214" id="srcline214">214</a></span><span class="line">    for (k = 1:length(vars))</span></span>
+<span class="srcline"><span class="lineno"><a href="1,215" id="srcline215">215</a></span><span class="line">        vars(k).error(j) = sqrt(dx)*norm(u-vars(k).v);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,216" id="srcline216">216</a></span><span class="line">        switch vars(k).type</span></span>
+<span class="srcline"><span class="lineno"><a href="1,217" id="srcline217">217</a></span><span class="line">            case {2,-1, 3}</span></span>
+<span class="srcline"><span class="lineno"><a href="1,218" id="srcline218">218</a></span><span class="line">                <span class="comment">%update car nodes</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,219" id="srcline219">219</a></span><span class="line">                vars(k) = Update_Overhaul(param, vars(k));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,220" id="srcline220">220</a></span><span class="line">        end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,221" id="srcline221">221</a></span><span class="line">        umv = u - vars(k).v;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,222" id="srcline222">222</a></span><span class="line">        Ih_umv = LinTerp(param, vars(k), umv);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,223" id="srcline223">223</a></span><span class="line">        vars(k).v(2:N) = B\(vars(k).v(2:N)+dt*(alpha*(-2*vars(k).v(2:N)-(vars(k).v(2:N).^3))+ (mu)*Ih_umv)); <span class="comment">%Convex Splitting Method</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,224" id="srcline224">224</a></span><span class="line">    end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,225" id="srcline225">225</a></span><span class="line">    <span class="comment">%update u</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,226" id="srcline226">226</a></span><span class="line">    u(2:N) = B\(u(2:N).*(ones(N-1,1)+dt.*(alpha.*(-2-(u(2:N).^2))))); <span class="comment">%Convex Splitting Method</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,227" id="srcline227">227</a></span><span class="line">    u_solo.u = u;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,228" id="srcline228">228</a></span><span class="line">    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,229" id="srcline229">229</a></span><span class="line">    show = 100;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,230" id="srcline230">230</a></span><span class="line"><span class="comment">% show = 1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,231" id="srcline231">231</a></span><span class="line">    if(j&lt;=50)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,232" id="srcline232">232</a></span><span class="line">        show = 1;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,233" id="srcline233">233</a></span><span class="line">    end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,234" id="srcline234">234</a></span><span class="line">    <span class="comment">%     if(max(u)&gt; 0.9/sqrt(alpha)&amp;&amp;graph &amp;&amp; mod(k,5) == 0</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,235" id="srcline235">235</a></span><span class="line"><span class="comment">%     if(graph &amp;&amp; mod(j,show) == 0)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,236" id="srcline236">236</a></span><span class="line"><span class="comment">%         if(~Graphing_Overhaul(param,u_solo,vars))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,237" id="srcline237">237</a></span><span class="line"><span class="comment">%             return</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,238" id="srcline238">238</a></span><span class="line"><span class="comment">%         end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,239" id="srcline239">239</a></span><span class="line"><span class="comment">%     end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,240" id="srcline240">240</a></span><span class="line">end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,241" id="srcline241">241</a></span><span class="line"><span class="comment">%Get last error measurement</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,242" id="srcline242">242</a></span><span class="line"> for k = 1:length(vars)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,243" id="srcline243">243</a></span><span class="line">        vars(k).error(end) = sqrt(dx)*norm(u-vars(k).v);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,244" id="srcline244">244</a></span><span class="line"> end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,245" id="srcline245">245</a></span><span class="line"> </span></span>
+<span class="srcline"><span class="lineno"><a href="1,246" id="srcline246">246</a></span><span class="line"> <span class="comment">%% Plot Error</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,247" id="srcline247">247</a></span><span class="line"> figure</span></span>
+<span class="srcline"><span class="lineno"><a href="1,248" id="srcline248">248</a></span><span class="line"> legendInfo = cell(1,length(vars));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,249" id="srcline249">249</a></span><span class="line"> for k = 1:length(vars)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,250" id="srcline250">250</a></span><span class="line">     if(k==2)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,251" id="srcline251">251</a></span><span class="line">         semilogy(0:dt:T,vars(k).error,'--','LineWidth',1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,252" id="srcline252">252</a></span><span class="line">     else</span></span>
+<span class="srcline"><span class="lineno"><a href="1,253" id="srcline253">253</a></span><span class="line">         semilogy(0:dt:T,vars(k).error,'LineWidth',1);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,254" id="srcline254">254</a></span><span class="line">     end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,255" id="srcline255">255</a></span><span class="line">     hold on;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,256" id="srcline256">256</a></span><span class="line">     switch vars(k).type</span></span>
+<span class="srcline"><span class="lineno"><a href="1,257" id="srcline257">257</a></span><span class="line">         case 0</span></span>
+<span class="srcline"><span class="lineno"><a href="1,258" id="srcline258">258</a></span><span class="line">             text = 'u';</span></span>
+<span class="srcline"><span class="lineno"><a href="1,259" id="srcline259">259</a></span><span class="line">         case 1</span></span>
+<span class="srcline"><span class="lineno"><a href="1,260" id="srcline260">260</a></span><span class="line">             text = 'Uniform Grid';</span></span>
+<span class="srcline"><span class="lineno"><a href="1,261" id="srcline261">261</a></span><span class="line">         case 2 </span></span>
+<span class="srcline"><span class="lineno"><a href="1,262" id="srcline262">262</a></span><span class="line">             text = 'Sweeping Probe';</span></span>
+<span class="srcline"><span class="lineno"><a href="1,263" id="srcline263">263</a></span><span class="line">         otherwise</span></span>
+<span class="srcline"><span class="lineno"><a href="1,264" id="srcline264">264</a></span><span class="line">             text = 'Misc.';</span></span>
+<span class="srcline"><span class="lineno"><a href="1,265" id="srcline265">265</a></span><span class="line">     end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,266" id="srcline266">266</a></span><span class="line">     legendInfo{k} = [text];</span></span>
+<span class="srcline"><span class="lineno"><a href="1,267" id="srcline267">267</a></span><span class="line"> end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,268" id="srcline268">268</a></span><span class="line">legend(legendInfo);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,269" id="srcline269">269</a></span><span class="line">xlabel('Time');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,270" id="srcline270">270</a></span><span class="line">ylabel('L^2 Norm of u-v');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,271" id="srcline271">271</a></span><span class="line">title('Error Plot for Different Methods');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,272" id="srcline272">272</a></span><span class="line"><span class="comment">% date = datestr(now,'yyyy.mm.dd.HH.MM.SS');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,273" id="srcline273">273</a></span><span class="line">if(save_check)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,274" id="srcline274">274</a></span><span class="line">    if(~exists(date_string))</span></span>
+<span class="srcline"><span class="lineno"><a href="1,275" id="srcline275">275</a></span><span class="line">        date_string = datestr(now,'yyyy.mm.dd.HH.MM.SS');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,276" id="srcline276">276</a></span><span class="line">    end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,277" id="srcline277">277</a></span><span class="line">    save(sprintf('Data/Overhauled/%s_Initial_Ramp_Var_Config_nu=%.1d_alpha=%.0d_mu=%.0d.mat',date_string,nu,alpha,mu),'param','vars');</span></span>
+<span class="srcline"><span class="lineno"><a href="1,278" id="srcline278">278</a></span><span class="line">end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,279" id="srcline279">279</a></span><span class="line">end</span></span>
+</pre>
+</div>
+<pre class="code">
+<span class="srcline"><span class="lineno"><a href="1,280" id="srcline280">280</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,281" id="srcline281">281</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,282" id="srcline282">282</a></span><span class="line"><span class="keyword">function</span> [<span class="var type1" id="S82T31U1124">lin</span>] = LinTerp(<span class="var type1" id="S83T1U1127">p</span>,<span class="var type1" id="S84T26U1128">v</span>,<span class="var type1" id="S85T6U1129">umv</span>)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,283" id="srcline283">283</a></span><span class="line"><span class="keyword">switch</span> <span class="mxinfo " id="T2:U5"><span class="var type1" id="S84T26U1132">v</span>.type</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,284" id="srcline284">284</a></span><span class="line">    <span class="keyword">case</span> <span class="mxinfo " id="T2:U7">1</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,285" id="srcline285">285</a></span><span class="line">        <span class="mxinfo " id="T31:U8"><span class="var type1" id="S82T31U1138">lin</span> = <span class="mxinfo " id="T6:U10"><span class="mxinfo " id="T3:U11">interp1(<span class="mxinfo " id="T7:U12"><span class="var type1" id="S84T26U1143">v</span>.x_nodes</span>,<span class="mxinfo " id="T86:U14"><span class="var type1" id="S85T6U1146">umv</span>(<span class="mxinfo " id="T7:U16"><span class="var type1" id="S84T26U1148">v</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U18"><span class="var type1" id="S83T1U1151">p</span>.x</span>)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,286" id="srcline286">286</a></span><span class="line">        <span class="mxinfo " id="T31:U20"><span class="var type1" id="S82T31U1156">lin</span>(<span class="mxinfo " id="T2:U22">end</span>) = []</span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,287" id="srcline287">287</a></span><span class="line">    <span class="keyword">case</span> {<span class="mxinfo " id="T2:U23">2</span>,<span class="mxinfo " id="T2:U24">-1</span>, <span class="mxinfo " id="T2:U25">3</span>}</span></span>
+<span class="srcline"><span class="lineno"><a href="1,288" id="srcline288">288</a></span><span class="line">        [<span class="var type1" id="S88T2U1171">maximum</span>,<span class="var type1" id="S89T2U1172">index</span>] = max(<span class="mxinfo " id="T76:U28"><span class="mxinfo " id="T76:U29"><span class="mxinfo " id="T7:U30"><span class="var type1" id="S84T26U1178">v</span>.x_nodes</span>(2:end)</span>-<span class="mxinfo " id="T76:U32"><span class="mxinfo " id="T7:U33"><span class="var type1" id="S84T26U1186">v</span>.x_nodes</span>(<span class="mxinfo " id="T76:U35"><span class="mxinfo " id="T2:U36">1</span>:<span class="mxinfo " id="T2:U37">end-1</span></span>)</span></span>);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,289" id="srcline289">289</a></span><span class="line">        <span class="keyword">if</span><span class="mxinfo " id="T9:U38">(<span class="mxinfo " id="T2:U39"><span class="var type1" id="S88T2U1199">maximum</span>*<span class="mxinfo " id="T2:U41"><span class="var type1" id="S83T1U1201">p</span>.dx</span></span>) &gt; <span class="mxinfo " id="T2:U43">ceil(<span class="mxinfo " id="T2:U44">(<span class="mxinfo " id="T2:U45"><span class="mxinfo " id="T2:U46"><span class="var type1" id="S83T1U1209">p</span>.L</span>/<span class="mxinfo " id="T2:U48"><span class="var type1" id="S84T26U1212">v</span>.int_nodes</span></span>)*<span class="mxinfo " id="T2:U50"><span class="var type1" id="S83T1U1215">p</span>.dx</span></span>)</span></span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,290" id="srcline290">290</a></span><span class="line"><span class="comment">%             maximum</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,291" id="srcline291">291</a></span><span class="line">            <span class="mxinfo " id="T87:U52"><span class="var type1" id="S92T87U1219">group1</span> = <span class="mxinfo " id="T87:U54">struct(<span class="string">'i_nodes'</span>,<span class="mxinfo " id="T28:U55"><span class="mxinfo " id="T7:U56"><span class="var type1" id="S84T26U1225">v</span>.i_nodes</span>(<span class="mxinfo " id="T28:U58"><span class="mxinfo " id="T2:U59">1</span>:<span class="var type1" id="S89T2U1229">index</span></span>)</span>,<span class="string">'x_nodes'</span>,<span class="mxinfo " id="T28:U61"><span class="mxinfo " id="T7:U62"><span class="var type1" id="S84T26U1233">v</span>.x_nodes</span>(<span class="mxinfo " id="T28:U64"><span class="mxinfo " id="T2:U65">1</span>:<span class="var type1" id="S89T2U1237">index</span></span>)</span>)</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,292" id="srcline292">292</a></span><span class="line">            <span class="mxinfo " id="T87:U67"><span class="var type1" id="S94T87U1240">group2</span> = <span class="mxinfo " id="T87:U69">struct(<span class="string">'i_nodes'</span>,<span class="mxinfo " id="T28:U70"><span class="mxinfo " id="T7:U71"><span class="var type1" id="S84T26U1246">v</span>.i_nodes</span>(<span class="mxinfo " id="T28:U73"><span class="mxinfo " id="T2:U74"><span class="var type1" id="S89T2U1250">index</span>+<span class="mxinfo " id="T2:U76">1</span></span>:<span class="mxinfo " id="T2:U77">end</span></span>)</span>,<span class="string">'x_nodes'</span>,<span class="mxinfo " id="T28:U78"><span class="mxinfo " id="T7:U79"><span class="var type1" id="S84T26U1257">v</span>.x_nodes</span>(<span class="mxinfo " id="T28:U81"><span class="mxinfo " id="T2:U82"><span class="var type1" id="S89T2U1261">index</span>+<span class="mxinfo " id="T2:U84">1</span></span>:<span class="mxinfo " id="T2:U85">end</span></span>)</span>)</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,293" id="srcline293">293</a></span><span class="line">            <span class="keyword">if</span>(<span class="mxinfo " id="T9:U86"><span class="var type1" id="S89T2U1269">index</span> ==<span class="mxinfo " id="T2:U88">1</span></span>)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,294" id="srcline294">294</a></span><span class="line">                <span class="mxinfo " id="T31:U89"><span class="var type1" id="S82T31U1273">lin</span> = <span class="mxinfo " id="T6:U91"><span class="mxinfo " id="T3:U92">interp1(<span class="mxinfo " id="T28:U93"><span class="var type1" id="S94T87U1278">group2</span>.x_nodes</span>,<span class="mxinfo " id="T31:U95"><span class="var type1" id="S85T6U1281">umv</span>(<span class="mxinfo " id="T28:U97"><span class="var type1" id="S94T87U1283">group2</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U99"><span class="var type1" id="S83T1U1286">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,295" id="srcline295">295</a></span><span class="line">                <span class="mxinfo " id="T2:U101"><span class="mxinfo " id="T2:U102"><span class="var type1" id="S82T31U1293">lin</span>(<span class="mxinfo " id="T2:U104">1</span>)</span> = <span class="mxinfo " id="T2:U105"><span class="var type1" id="S85T6U1296">umv</span>(<span class="mxinfo " id="T2:U107">1</span>)</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,296" id="srcline296">296</a></span><span class="line">            <span class="keyword">elseif</span>(<span class="mxinfo " id="T9:U108"><span class="mxinfo " id="T2:U109">length(<span class="mxinfo " id="T28:U110"><span class="var type1" id="S94T87U1304">group2</span>.i_nodes</span>)</span>==<span class="mxinfo " id="T2:U112">1</span></span>)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,297" id="srcline297">297</a></span><span class="line">                <span class="mxinfo " id="T31:U113"><span class="var type1" id="S82T31U1309">lin</span> = <span class="mxinfo " id="T6:U115"><span class="mxinfo " id="T3:U116">interp1(<span class="mxinfo " id="T28:U117"><span class="var type1" id="S92T87U1314">group1</span>.x_nodes</span>,<span class="mxinfo " id="T31:U119"><span class="var type1" id="S85T6U1317">umv</span>(<span class="mxinfo " id="T28:U121"><span class="var type1" id="S92T87U1319">group1</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U123"><span class="var type1" id="S83T1U1322">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,298" id="srcline298">298</a></span><span class="line">                <span class="mxinfo " id="T2:U125"><span class="mxinfo " id="T2:U126"><span class="var type1" id="S82T31U1329">lin</span>(<span class="mxinfo " id="T2:U128"><span class="mxinfo " id="T2:U129"><span class="var type1" id="S83T1U1332">p</span>.N</span>-<span class="mxinfo " id="T2:U131">1</span></span>)</span> = <span class="mxinfo " id="T2:U132"><span class="var type1" id="S85T6U1336">umv</span>(<span class="mxinfo " id="T2:U134"><span class="mxinfo " id="T2:U135"><span class="var type1" id="S83T1U1339">p</span>.N</span>-<span class="mxinfo " id="T2:U137">1</span></span>)</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,299" id="srcline299">299</a></span><span class="line">            <span class="keyword">elseif</span>(<span class="mxinfo " id="T9:U138"><span class="mxinfo " id="T2:U139"><span class="mxinfo " id="T7:U140"><span class="var type1" id="S84T26U1347">v</span>.i_nodes</span>(<span class="mxinfo " id="T39:U142">1</span>)</span> ==<span class="mxinfo " id="T2:U143">0</span></span>) <span class="comment">%0 is included</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,300" id="srcline300">300</a></span><span class="line">                <span class="mxinfo " id="T6:U144"><span class="var type1" id="S96T6U1353">lin1</span> = <span class="mxinfo " id="T6:U146"><span class="mxinfo " id="T3:U147">interp1(<span class="mxinfo " id="T28:U148"><span class="mxinfo " id="T28:U149"><span class="var type1" id="S92T87U1359">group1</span>.x_nodes</span>(<span class="mxinfo " id="T28:U151"><span class="mxinfo " id="T2:U152">2</span>:end</span>)</span>,<span class="mxinfo " id="T31:U153"><span class="var type1" id="S85T6U1366">umv</span>(<span class="mxinfo " id="T28:U155"><span class="mxinfo " id="T28:U156"><span class="var type1" id="S92T87U1369">group1</span>.i_nodes</span>(<span class="mxinfo " id="T28:U158"><span class="mxinfo " id="T2:U159">2</span>:end</span>)</span>)</span>,<span class="mxinfo " id="T3:U160"><span class="var type1" id="S83T1U1376">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,301" id="srcline301">301</a></span><span class="line">                <span class="mxinfo " id="T6:U162"><span class="var type1" id="S97T6U1382">lin2</span> = <span class="mxinfo " id="T6:U164"><span class="mxinfo " id="T3:U165">interp1(<span class="mxinfo " id="T28:U166"><span class="var type1" id="S94T87U1387">group2</span>.x_nodes</span>,<span class="mxinfo " id="T31:U168"><span class="var type1" id="S85T6U1390">umv</span>(<span class="mxinfo " id="T28:U170"><span class="var type1" id="S94T87U1392">group2</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U172"><span class="var type1" id="S83T1U1395">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,302" id="srcline302">302</a></span><span class="line">                <span class="mxinfo " id="T31:U174"><span class="var type1" id="S82T31U1401">lin</span> = <span class="mxinfo " id="T6:U176"><span class="var type1" id="S96T6U1403">lin1</span> + <span class="var type1" id="S97T6U1404">lin2</span></span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,303" id="srcline303">303</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,304" id="srcline304">304</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,305" id="srcline305">305</a></span><span class="line">            <span class="keyword">else</span> <span class="comment">%0 is not included</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,306" id="srcline306">306</a></span><span class="line">                <span class="mxinfo " id="T6:U179"><span class="var type1" id="S96T6U1408">lin1</span> = <span class="mxinfo " id="T6:U181"><span class="mxinfo " id="T3:U182">interp1(<span class="mxinfo " id="T28:U183"><span class="var type1" id="S92T87U1413">group1</span>.x_nodes</span>,<span class="mxinfo " id="T31:U185"><span class="var type1" id="S85T6U1416">umv</span>(<span class="mxinfo " id="T28:U187"><span class="var type1" id="S92T87U1418">group1</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U189"><span class="var type1" id="S83T1U1421">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,307" id="srcline307">307</a></span><span class="line">                <span class="mxinfo " id="T6:U191"><span class="var type1" id="S97T6U1427">lin2</span> = <span class="mxinfo " id="T6:U193"><span class="mxinfo " id="T3:U194">interp1(<span class="mxinfo " id="T28:U195"><span class="var type1" id="S94T87U1432">group2</span>.x_nodes</span>,<span class="mxinfo " id="T31:U197"><span class="var type1" id="S85T6U1435">umv</span>(<span class="mxinfo " id="T28:U199"><span class="var type1" id="S94T87U1437">group2</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U201"><span class="var type1" id="S83T1U1440">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,308" id="srcline308">308</a></span><span class="line">                <span class="mxinfo " id="T31:U203"><span class="var type1" id="S82T31U1446">lin</span> = <span class="mxinfo " id="T6:U205"><span class="var type1" id="S96T6U1448">lin1</span> + <span class="var type1" id="S97T6U1449">lin2</span></span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,309" id="srcline309">309</a></span><span class="line">            <span class="keyword">end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,310" id="srcline310">310</a></span><span class="line">            <span class="mxinfo " id="T31:U208"><span class="var type1" id="S82T31U1453">lin</span>(<span class="mxinfo " id="T2:U210">end</span>) = []</span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,311" id="srcline311">311</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,312" id="srcline312">312</a></span><span class="line">        <span class="keyword">else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,313" id="srcline313">313</a></span><span class="line">            <span class="comment">%No gap in the car</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,314" id="srcline314">314</a></span><span class="line">            <span class="keyword">if</span>(<span class="mxinfo " id="T9:U211"><span class="mxinfo " id="T2:U212"><span class="mxinfo " id="T7:U213"><span class="var type1" id="S84T26U1465">v</span>.i_nodes</span>(<span class="mxinfo " id="T39:U215">1</span>)</span> ==<span class="mxinfo " id="T2:U216">0</span></span>)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,315" id="srcline315">315</a></span><span class="line">                <span class="mxinfo " id="T31:U217"><span class="var type1" id="S82T31U1471">lin</span> = <span class="mxinfo " id="T6:U219"><span class="mxinfo " id="T3:U220">interp1(<span class="mxinfo " id="T76:U221"><span class="mxinfo " id="T7:U222"><span class="var type1" id="S84T26U1477">v</span>.x_nodes</span>(2:end)</span>,<span class="mxinfo " id="T88:U224"><span class="var type1" id="S85T6U1484">umv</span>(<span class="mxinfo " id="T76:U226"><span class="mxinfo " id="T7:U227"><span class="var type1" id="S84T26U1487">v</span>.i_nodes</span>(2:end)</span>)</span>,<span class="mxinfo " id="T3:U229"><span class="var type1" id="S83T1U1494">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,316" id="srcline316">316</a></span><span class="line">            <span class="keyword">else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,317" id="srcline317">317</a></span><span class="line">                <span class="mxinfo " id="T31:U231"><span class="var type1" id="S82T31U1501">lin</span> = <span class="mxinfo " id="T6:U233"><span class="mxinfo " id="T3:U234">interp1(<span class="mxinfo " id="T7:U235"><span class="var type1" id="S84T26U1506">v</span>.x_nodes</span>,<span class="mxinfo " id="T86:U237"><span class="var type1" id="S85T6U1509">umv</span>(<span class="mxinfo " id="T7:U239"><span class="var type1" id="S84T26U1511">v</span>.i_nodes</span>)</span>,<span class="mxinfo " id="T3:U241"><span class="var type1" id="S83T1U1514">p</span>.x</span>,<span class="string">'linear'</span>,0)</span>'</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,318" id="srcline318">318</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,319" id="srcline319">319</a></span><span class="line"></span></span>
+<span class="srcline"><span class="lineno"><a href="1,320" id="srcline320">320</a></span><span class="line">            <span class="keyword">end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,321" id="srcline321">321</a></span><span class="line">            <span class="mxinfo " id="T31:U243"><span class="var type1" id="S82T31U1521">lin</span>(<span class="mxinfo " id="T2:U245">end</span>) = []</span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,322" id="srcline322">322</a></span><span class="line">        <span class="keyword">end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,323" id="srcline323">323</a></span><span class="line">    <span class="keyword">otherwise</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,324" id="srcline324">324</a></span><span class="line">        <span class="mxinfo " id="T31:U246"><span class="var type1" id="S82T31U1529">lin</span> = <span class="mxinfo " id="T31:U248">zeros(<span class="mxinfo " id="T2:U249"><span class="mxinfo " id="T2:U250"><span class="var type1" id="S83T1U1534">p</span>.N</span>-<span class="mxinfo " id="T2:U252">1</span></span>,1)</span></span>;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,325" id="srcline325">325</a></span><span class="line">        </span></span>
+<span class="srcline"><span class="lineno"><a href="1,326" id="srcline326">326</a></span><span class="line"><span class="keyword">end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,327" id="srcline327">327</a></span><span class="line"><span class="comment">% lin = 1;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,328" id="srcline328">328</a></span><span class="line"><span class="keyword">end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,329" id="srcline329">329</a></span><span class="line"></span></span>
+</pre>
+<div class="dead">
+<pre class="code">
+<span class="srcline"><span class="lineno"><a href="1,330" id="srcline330">330</a></span><span class="line">function [var] = Update_Overhaul(p, v)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,331" id="srcline331">331</a></span><span class="line"><span class="comment">% var = v;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,332" id="srcline332">332</a></span><span class="line"><span class="comment">% v.x_nodes = unique(floor(mod(v.x_nodes + v.velocity*p.t_adj,1)./p.dx).*p.dx);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,333" id="srcline333">333</a></span><span class="line">switch v.type</span></span>
+<span class="srcline"><span class="lineno"><a href="1,334" id="srcline334">334</a></span><span class="line">    case -1</span></span>
+<span class="srcline"><span class="lineno"><a href="1,335" id="srcline335">335</a></span><span class="line">        v.i_nodes = unique(mod(v.i_nodes+v.direction*v.velocity,p.N));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,336" id="srcline336">336</a></span><span class="line">        if(v.i_nodes(1)==0)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,337" id="srcline337">337</a></span><span class="line">            v.i_nodes(1) = [];</span></span>
+<span class="srcline"><span class="lineno"><a href="1,338" id="srcline338">338</a></span><span class="line">            v.i_nodes = [v.i_nodes, p.N];</span></span>
+<span class="srcline"><span class="lineno"><a href="1,339" id="srcline339">339</a></span><span class="line">        end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,340" id="srcline340">340</a></span><span class="line">        v.x_nodes = p.x(v.i_nodes);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,341" id="srcline341">341</a></span><span class="line">    case 2</span></span>
+<span class="srcline"><span class="lineno"><a href="1,342" id="srcline342">342</a></span><span class="line">        v.x_nodes = unique(floor(mod(v.x_nodes + v.direction*v.velocity*p.dt,1)./p.dx).*p.dx);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,343" id="srcline343">343</a></span><span class="line">        [maximum,index] = max(v.x_nodes(2:end)-v.x_nodes(1:end-1));</span></span>
+<span class="srcline"><span class="lineno"><a href="1,344" id="srcline344">344</a></span><span class="line">        if(maximum &gt; p.dx*v.int_nodes)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,345" id="srcline345">345</a></span><span class="line">            v.i_nodes(1:index) = v.i_nodes(1:index);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,346" id="srcline346">346</a></span><span class="line">        elseif(maximum == p.dx*2) <span class="comment">%Gap caused when crossing over boundary</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,347" id="srcline347">347</a></span><span class="line">            v.x_nodes(1:index) = v.x_nodes(1:index) - p.dx;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,348" id="srcline348">348</a></span><span class="line">            v.i_nodes = v.x_nodes./p.dx;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,349" id="srcline349">349</a></span><span class="line">            </span></span>
+<span class="srcline"><span class="lineno"><a href="1,350" id="srcline350">350</a></span><span class="line">        else</span></span>
+<span class="srcline"><span class="lineno"><a href="1,351" id="srcline351">351</a></span><span class="line">            v.i_nodes = v.x_nodes./p.dx;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,352" id="srcline352">352</a></span><span class="line">        end    </span></span>
+<span class="srcline"><span class="lineno"><a href="1,353" id="srcline353">353</a></span><span class="line">    case 3</span></span>
+<span class="srcline"><span class="lineno"><a href="1,354" id="srcline354">354</a></span><span class="line">        v.x_nodes = unique(floor(mod(v.x_nodes + v.direction*v.velocity*p.dt,1)./p.dx).*p.dx);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,355" id="srcline355">355</a></span><span class="line">         v.i_nodes = v.x_nodes./p.dx;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,356" id="srcline356">356</a></span><span class="line">         if(v.i_nodes(1)==0)</span></span>
+<span class="srcline"><span class="lineno"><a href="1,357" id="srcline357">357</a></span><span class="line">             v.i_nodes(1) = [];</span></span>
+<span class="srcline"><span class="lineno"><a href="1,358" id="srcline358">358</a></span><span class="line">             v.i_nodes = [v.i_nodes, p.N];</span></span>
+<span class="srcline"><span class="lineno"><a href="1,359" id="srcline359">359</a></span><span class="line">             v.x_nodes = p.x(v.i_nodes);</span></span>
+<span class="srcline"><span class="lineno"><a href="1,360" id="srcline360">360</a></span><span class="line">         end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,361" id="srcline361">361</a></span><span class="line">    otherwise</span></span>
+<span class="srcline"><span class="lineno"><a href="1,362" id="srcline362">362</a></span><span class="line">        <span class="comment">%         var = v;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,363" id="srcline363">363</a></span><span class="line">end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,364" id="srcline364">364</a></span><span class="line">var = v;</span></span>
+<span class="srcline"><span class="lineno"><a href="1,365" id="srcline365">365</a></span><span class="line">end</span></span>
+<span class="srcline"><span class="lineno"><a href="1,366" id="srcline366">366</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,367" id="srcline367">367</a></span><span class="line"><span class="comment">% function [check] = Graphing_Overhaul(p,u,v)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,368" id="srcline368">368</a></span><span class="line"><span class="comment">% persistent grapher_var fig grapher_u saver</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,369" id="srcline369">369</a></span><span class="line"><span class="comment">% if(p.t == 0)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,370" id="srcline370">370</a></span><span class="line"><span class="comment">%     grapher_var = [];</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,371" id="srcline371">371</a></span><span class="line"><span class="comment">%     fig = [];</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,372" id="srcline372">372</a></span><span class="line"><span class="comment">%     grapher_u = [];</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,373" id="srcline373">373</a></span><span class="line"><span class="comment">%     saver = [];</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,374" id="srcline374">374</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,375" id="srcline375">375</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,376" id="srcline376">376</a></span><span class="line"><span class="comment">% m = length(v);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,377" id="srcline377">377</a></span><span class="line"><span class="comment">% if(~isempty(fig)&amp;&amp;~isvalid(fig)&amp;&amp;isempty(grapher_u))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,378" id="srcline378">378</a></span><span class="line"><span class="comment">%     clear fig;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,379" id="srcline379">379</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,380" id="srcline380">380</a></span><span class="line"><span class="comment">% if(isempty(fig))%||~isvalid(fig))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,381" id="srcline381">381</a></span><span class="line"><span class="comment">% %     set(gca,'fontsize', 16);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,382" id="srcline382">382</a></span><span class="line"><span class="comment">% %     set(findall(gcf,'-property','FontSize'),'FontSize',16)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,383" id="srcline383">383</a></span><span class="line"><span class="comment">%     fig = gcf;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,384" id="srcline384">384</a></span><span class="line"><span class="comment">% %     fig = figure('DefaultAxesFontSize',16);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,385" id="srcline385">385</a></span><span class="line"><span class="comment">% % Set up figure properties:</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,386" id="srcline386">386</a></span><span class="line"><span class="comment">% % Enlarge figure to full screen.</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,387" id="srcline387">387</a></span><span class="line"><span class="comment">% % set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,388" id="srcline388">388</a></span><span class="line"><span class="comment">% % Get rid of tool bar and pulldown menus that are along top of figure.</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,389" id="srcline389">389</a></span><span class="line"><span class="comment">% % set(gcf, 'Toolbar', 'none', 'Menu', 'none');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,390" id="srcline390">390</a></span><span class="line"><span class="comment">% %     set(gcf, 'Position', get(0, 'Screensize'));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,391" id="srcline391">391</a></span><span class="line"><span class="comment">% %         figure('units','normalized','outerposition',[0 0 1 1])</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,392" id="srcline392">392</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,393" id="srcline393">393</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,394" id="srcline394">394</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,395" id="srcline395">395</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,396" id="srcline396">396</a></span><span class="line"><span class="comment">% else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,397" id="srcline397">397</a></span><span class="line"><span class="comment">%     if(~ishghandle(fig))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,398" id="srcline398">398</a></span><span class="line"><span class="comment">%         clear grapher_var fig grapher_u</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,399" id="srcline399">399</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,400" id="srcline400">400</a></span><span class="line"><span class="comment">%         check  = false;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,401" id="srcline401">401</a></span><span class="line"><span class="comment">%         return</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,402" id="srcline402">402</a></span><span class="line"><span class="comment">%     end </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,403" id="srcline403">403</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,404" id="srcline404">404</a></span><span class="line"><span class="comment">% if(gcf~=fig)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,405" id="srcline405">405</a></span><span class="line"><span class="comment">% %     set(findall(gcf,'-property','FontSize'),'FontSize',16)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,406" id="srcline406">406</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,407" id="srcline407">407</a></span><span class="line"><span class="comment">%     figure(fig)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,408" id="srcline408">408</a></span><span class="line"><span class="comment">%     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,409" id="srcline409">409</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,410" id="srcline410">410</a></span><span class="line"><span class="comment">% if(isempty(grapher_u))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,411" id="srcline411">411</a></span><span class="line"><span class="comment">%     grapher_u.graph = plot(p.x,u.u, 'LineWidth',1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,412" id="srcline412">412</a></span><span class="line"><span class="comment">%     set(grapher_u.graph, 'YDataSource','u.u');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,413" id="srcline413">413</a></span><span class="line"><span class="comment">%     hold on;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,414" id="srcline414">414</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,415" id="srcline415">415</a></span><span class="line"><span class="comment">% else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,416" id="srcline416">416</a></span><span class="line"><span class="comment">%     refreshdata(grapher_u.graph,'caller');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,417" id="srcline417">417</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,418" id="srcline418">418</a></span><span class="line"><span class="comment">% if(isempty(grapher_var))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,419" id="srcline419">419</a></span><span class="line"><span class="comment">%     grapher_var = repelem(struct,m,1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,420" id="srcline420">420</a></span><span class="line"><span class="comment">%     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,421" id="srcline421">421</a></span><span class="line"><span class="comment">%     for i = 1:m</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,422" id="srcline422">422</a></span><span class="line"><span class="comment">%         switch v(i).type</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,423" id="srcline423">423</a></span><span class="line"><span class="comment">%             case 0</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,424" id="srcline424">424</a></span><span class="line"><span class="comment">%                 grapher_var(i).graph = plot(p.x,v(i).u);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,425" id="srcline425">425</a></span><span class="line"><span class="comment">%                 set(grapher_var(i).graph, 'YDataSource',sprintf('v(%i).u',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,426" id="srcline426">426</a></span><span class="line"><span class="comment">%                 grapher_var(i).DAgraph = [];</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,427" id="srcline427">427</a></span><span class="line"><span class="comment">%                 hold on;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,428" id="srcline428">428</a></span><span class="line"><span class="comment">%             case 1</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,429" id="srcline429">429</a></span><span class="line"><span class="comment">%                 if(i==1)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,430" id="srcline430">430</a></span><span class="line"><span class="comment">%                     grapher_var(i).graph = plot(p.x,v(i).v,'-g','LineWidth',1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,431" id="srcline431">431</a></span><span class="line"><span class="comment">%                     set(grapher_var(i).graph, 'YDataSource',sprintf('v(%i).v',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,432" id="srcline432">432</a></span><span class="line"><span class="comment">%                     grapher_var(i).DAgraph = scatter(v(i).x_nodes,zeros(1,v(i).int_nodes),'ob');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,433" id="srcline433">433</a></span><span class="line"><span class="comment">%                     set(grapher_var(i).DAgraph, 'XDataSource',sprintf('v(%i).x_nodes',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,434" id="srcline434">434</a></span><span class="line"><span class="comment">%                     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,435" id="srcline435">435</a></span><span class="line"><span class="comment">%                     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,436" id="srcline436">436</a></span><span class="line"><span class="comment">%                 else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,437" id="srcline437">437</a></span><span class="line"><span class="comment">%                     grapher_var(i).graph = plot(p.x,v(i).v,'--r','LineWidth',1);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,438" id="srcline438">438</a></span><span class="line"><span class="comment">%                     set(grapher_var(i).graph, 'YDataSource',sprintf('v(%i).v',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,439" id="srcline439">439</a></span><span class="line"><span class="comment">%                     grapher_var(i).DAgraph = scatter(v(i).x_nodes,zeros(1,v(i).int_nodes),'+r');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,440" id="srcline440">440</a></span><span class="line"><span class="comment">%                     set(grapher_var(i).DAgraph, 'XDataSource',sprintf('v(%i).x_nodes',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,441" id="srcline441">441</a></span><span class="line"><span class="comment">%                     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,442" id="srcline442">442</a></span><span class="line"><span class="comment">%                 end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,443" id="srcline443">443</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,444" id="srcline444">444</a></span><span class="line"><span class="comment">%                </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,445" id="srcline445">445</a></span><span class="line"><span class="comment">%                 </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,446" id="srcline446">446</a></span><span class="line"><span class="comment">%                 hold on;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,447" id="srcline447">447</a></span><span class="line"><span class="comment">%             case {-1, 2, 3}</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,448" id="srcline448">448</a></span><span class="line"><span class="comment">%                 grapher_var(i).graph = plot(p.x,v(i).v);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,449" id="srcline449">449</a></span><span class="line"><span class="comment">%                 set(grapher_var(i).graph, 'YDataSource',sprintf('v(%i).v',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,450" id="srcline450">450</a></span><span class="line"><span class="comment">%                 </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,451" id="srcline451">451</a></span><span class="line"><span class="comment">%                 </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,452" id="srcline452">452</a></span><span class="line"><span class="comment">%                 grapher_var(i).DAgraph = scatter(v(i).x_nodes,zeros(1,v(i).int_nodes),'+r');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,453" id="srcline453">453</a></span><span class="line"><span class="comment">%                 set(grapher_var(i).DAgraph, 'XDataSource',sprintf('v(%i).x_nodes',i));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,454" id="srcline454">454</a></span><span class="line"><span class="comment">%                 </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,455" id="srcline455">455</a></span><span class="line"><span class="comment">%                 hold on;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,456" id="srcline456">456</a></span><span class="line"><span class="comment">%             otherwise</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,457" id="srcline457">457</a></span><span class="line"><span class="comment">%                 </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,458" id="srcline458">458</a></span><span class="line"><span class="comment">%         end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,459" id="srcline459">459</a></span><span class="line"><span class="comment">%     end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,460" id="srcline460">460</a></span><span class="line"><span class="comment">%     y_amp = max([1.01/sqrt(p.alpha), 1e-2]);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,461" id="srcline461">461</a></span><span class="line"><span class="comment">%     axis tight manual;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,462" id="srcline462">462</a></span><span class="line"><span class="comment">%     axis([0 p.L -y_amp y_amp]);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,463" id="srcline463">463</a></span><span class="line"><span class="comment">%     title ( sprintf ('u(x, %1.3f)',p.t ));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,464" id="srcline464">464</a></span><span class="line"><span class="comment">%     xlabel('X');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,465" id="srcline465">465</a></span><span class="line"><span class="comment">%     ylabel('U(X)');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,466" id="srcline466">466</a></span><span class="line"><span class="comment">%     if(m~=0)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,467" id="srcline467">467</a></span><span class="line"><span class="comment">%         legend('Reference Solution','Uniform Solution','Uniform Gridpoints','Probe Solution','Probe Gridpoints');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,468" id="srcline468">468</a></span><span class="line"><span class="comment">%     else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,469" id="srcline469">469</a></span><span class="line"><span class="comment">%          legend('Reference Solution');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,470" id="srcline470">470</a></span><span class="line"><span class="comment">%     end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,471" id="srcline471">471</a></span><span class="line"><span class="comment">% else</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,472" id="srcline472">472</a></span><span class="line"><span class="comment">%     for i = 1:m</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,473" id="srcline473">473</a></span><span class="line"><span class="comment">%         refreshdata(grapher_var(i).graph,'caller');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,474" id="srcline474">474</a></span><span class="line"><span class="comment">%         if(~isempty(grapher_var(i).DAgraph))</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,475" id="srcline475">475</a></span><span class="line"><span class="comment">%             refreshdata(grapher_var(i).DAgraph,'caller');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,476" id="srcline476">476</a></span><span class="line"><span class="comment">%         end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,477" id="srcline477">477</a></span><span class="line"><span class="comment">%     end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,478" id="srcline478">478</a></span><span class="line"><span class="comment">%     title ( sprintf ('u(x, %1.3f)',p.t_adj ));</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,479" id="srcline479">479</a></span><span class="line"><span class="comment">% </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,480" id="srcline480">480</a></span><span class="line"><span class="comment">%     </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,481" id="srcline481">481</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,482" id="srcline482">482</a></span><span class="line"><span class="comment">% drawnow;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,483" id="srcline483">483</a></span><span class="line"><span class="comment">% % savecheck = true;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,484" id="srcline484">484</a></span><span class="line"><span class="comment">% % filename = 'carexample2.gif';</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,485" id="srcline485">485</a></span><span class="line"><span class="comment">% % % Capture the plot as an image</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,486" id="srcline486">486</a></span><span class="line"><span class="comment">% % frame = getframe(fig);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,487" id="srcline487">487</a></span><span class="line"><span class="comment">% % im = frame2im(frame);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,488" id="srcline488">488</a></span><span class="line"><span class="comment">% % [imind,cm] = rgb2ind(im,256);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,489" id="srcline489">489</a></span><span class="line"><span class="comment">% % </span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,490" id="srcline490">490</a></span><span class="line"><span class="comment">% % % Write to the GIF File</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,491" id="srcline491">491</a></span><span class="line"><span class="comment">% % if  isempty(saver)&amp;&amp;savecheck</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,492" id="srcline492">492</a></span><span class="line"><span class="comment">% %     imwrite(imind,cm,filename,'gif','DelayTime',0.1,  'Loopcount',inf);</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,493" id="srcline493">493</a></span><span class="line"><span class="comment">% %     saver = true;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,494" id="srcline494">494</a></span><span class="line"><span class="comment">% % elseif(savecheck)</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,495" id="srcline495">495</a></span><span class="line"><span class="comment">% %     imwrite(imind,cm,filename,'gif','DelayTime',0.1, 'WriteMode','append');</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,496" id="srcline496">496</a></span><span class="line"><span class="comment">% % end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,497" id="srcline497">497</a></span><span class="line"><span class="comment">% check = true;</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,498" id="srcline498">498</a></span><span class="line"><span class="comment">% return</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,499" id="srcline499">499</a></span><span class="line"><span class="comment">% end</span></span></span>
+<span class="srcline"><span class="lineno"><a href="1,500" id="srcline500">500</a></span><span class="line"> </span></span>
+</pre>
+</div>
